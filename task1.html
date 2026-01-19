@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+         .box1 {
+            background-color: red;
+            height: 100px;
+            width: 100px;
+            position: relative;
+            /* animation:ani1 linear ;
+            
+            animation-iteration-count: infinite;
+            animation-duration:1s ;
+            animation-direction: alternate;
+            border-radius:50%; */
+
+            animation: ani2 10s linear;
+            animation-iteration-count: infinite;
+
+            
+
+        }
+
+        @keyframes ani2 {
+                0%{
+                    top:0px;
+                    left:0px;
+                }
+                25%{
+                    top:0px;
+                    left:200px;
+                        background-color: rgb(64, 255, 0);
+                }
+                50%{
+                    top:200px;
+                    left:200px;
+                        background-color: rgb(0, 255, 247);
+                        border-radius: 50%;
+                }
+                75%{
+                     top:200px;
+                    left:0px;
+                        background-color: rgb(242, 0, 255);
+                }
+
+                100%{
+                     top:0px;
+                    left:0px;
+                        background-color: rgb(255, 0, 0);
+                }
+        }
+
+         /* @keyframes ani1 {
+            from{   
+                top: 0px;
+                left: 0px;
+            }
+            to{
+                top: 200px;
+                left: 200px;
+            } 
+        } */
+    </style>
+</head>
+<body>
+    <div class="box1">
+
+    </div>
+</body>
+</html>

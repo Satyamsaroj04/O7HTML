@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Satyam | Portfolio</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Typed.js -->
+    <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg fixed-top navbar-dark">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">Satyam.</a>
+            <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#menu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div id="menu" class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto gap-3">
+                    <li class="nav-item"><a href="#home" class="nav-link">Home</a></li>
+                    <li class="nav-item"><a href="#about" class="nav-link">About</a></li>
+                    <li class="nav-item"><a href="#skills" class="nav-link">Skills</a></li>
+                    <li class="nav-item"><a href="#github" class="nav-link">GitHub</a></li>
+                    <li class="nav-item"><a href="#contact" class="nav-link btn btn-primary px-3">Hire Me</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section id="home" class="hero">
+        <div class="container">
+            <h1 class="hero-title">
+                Hi, I'm <span>Satyam Saroj</span>
+            </h1>
+            <h3><span id="typing"></span></h3>
+
+            <div class="mt-4">
+                <a href="#" class="btn btn-primary">Download CV</a>
+                <a href="#contact" class="btn btn-outline-light">Contact</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" class="section">
+        <div class="container text-center">
+            <h2>About Me</h2>
+            <p>
+                Frontend Developer with Java & DSA background.
+                Passionate about building scalable and clean web applications.
+            </p>
+        </div>
+    </section>
+
+    <!-- SKILLS -->
+    <section id="skills" class="section bg-dark">
+        <div class="container">
+            <h2 class="text-center">Skills</h2>
+            <div class="row">
+                <div class="col-md-4 skill-card">HTML / CSS</div>
+                <div class="col-md-4 skill-card">Bootstrap</div>
+                <div class="col-md-4 skill-card">JavaScript</div>
+                <div class="col-md-4 skill-card">Java</div>
+                <div class="col-md-4 skill-card">C / C++</div>
+                <div class="col-md-4 skill-card">DSA</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- GITHUB PROJECTS -->
+    <section id="github" class="section">
+        <div class="container">
+            <h2 class="text-center">Live GitHub Projects</h2>
+            <div class="row" id="repo-list"></div>
+        </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="section bg-dark">
+        <div class="container text-center">
+            <h2>Contact Me</h2>
+            <form class="contact-form">
+                <input type="text" placeholder="Name" required>
+                <input type="email" placeholder="Email" required>
+                <textarea placeholder="Message"></textarea>
+                <button class="btn btn-primary mt-3">Send</button>
+            </form>
+        </div>
+    </section>
+
+    <footer>© 2026 Satyam Saroj</footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

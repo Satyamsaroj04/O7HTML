@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netflix clone</title>
+    <style>
+        .NetflixParent{
+            width: 100%;
+            height: 100vh;
+
+            /* Background image + dark overlay */
+            background:
+                linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+                url('https://wallpapercave.com/wp/wp14267548.jpg');
+
+            background-size: cover;
+            background-position: center;
+            
+            color: white;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+
+            position: relative; /* Important */
+        }
+
+        h1{
+            margin: 0;
+            font-size: 3em;
+            z-index: 2; /* Text image ke upar rahe */
+        }
+
+        .items{
+            display: flex;
+            gap: 25px;
+            z-index: 2; /* Text upar */
+        }
+
+        .items h4{
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .items h4:hover{
+            text-decoration: underline;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="NetflixParent">
+        <h1>NETFLIX CLONE</h1>
+
+        <div class="items">
+            <h4>HOME</h4>
+            <h4>SERIES</h4>
+            <h4>MOVIES</h4>
+            <h4>NEW & POPULAR</h4>
+            <h4>MY LIST</h4>
+        </div>
+
+    </div>
+</body>
+</html>

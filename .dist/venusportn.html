@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="venus.css">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+
+</head>
+
+<body>
+    <div class="container-fluid ">
+        <div class="row color height d-flex justify-content-center align-items-center sticky-top ">
+
+
+            <div class="col col-2 height d-flex justify-content-center align-items-center  ">
+                <img src="https://themewagon.github.io/venus-nextjs/images/logo/logo-white.svg" alt="">
+            </div>
+
+
+            <div class="col col-6 height d-flex justify-content-evenly align-items-center ">
+                <a class="a text-decoration-none text-light font1" href="#">HOME</a>
+                <a class="a text-decoration-none text-light font1" href="#">ABOUT</a>
+                <a class="a text-decoration-none text-light font1" href="#">SERVICES</a>
+                <a class="a text-decoration-none text-light font1" href="#">PORTFOLIO</a>
+
+                 <div class="dropdown">
+                    <a class="btn text-light dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                        Dropdown link
+                    </a>
+
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#">Action</a></li>
+                        <li><a class="dropdown-item" href="#">Another action</a></li>
+                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                    </ul>
+                </div>
+
+                <a class="a text-decoration-none text-light font1" href="#">CONTACT</a>
+                <a class="a text-decoration-none text-light font1" href="#">DOCUMENTATION</a>
+            </div>
+
+
+            <div class="col col-2 height d-flex justify-content-evenly align-items-center">
+                <i class="bi bi-brightness-low-fill text-light sunicon"></i>
+                <button type="button" class="btn btn-outline-primary">SIGN IN</button>
+                <button class="btn btn-danger" type="submit">SIGN OUT</button>
+
+            </div>
+        </div>
+
+
+
+        <div class="row   height1 d-flex justify-content-center align-items-center ">
+
+            <div class="col  col-5  height1">
+                <div class="row  height">
+                    <div class="col  col-12 height d-flex">
+                        <div class="col col-1 height d-flex justify-content-center align-items-center pad">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/2/2d/Basic_green_dot.png"
+                                class="image">
+                        </div>
+                        <div class="col col-11 ">
+                            <p class="text4">Build Everything</p>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="row  height2">
+                    <h1 class="text1"> Unveiling My Professional Odyssey: Portfolio Highlights</h1>
+                </div>
+                <div class="row height11">
+                    <p class="text2">A brief introduction about myself and my professional objectives.</p>
+                </div>
+                <div class="row  height11">
+                    <div class="col ">
+                        <button type="button" class="btn btn-primary">Get Started</button>
+                    </div>
+
+                </div>
+                <div class="row height ">
+                    <div class="col col-10  height12 d-flex justify-content-center align-items-center ">
+                        <img src="https://themewagon.github.io/venus-nextjs/images/hero/hero-profile-1.jpg"
+                            class="w-35 h-100 rounded-circle border border-light ">
+
+                        <img src="https://themewagon.github.io/venus-nextjs/images/hero/hero-profile-2.jpg"
+                            class="w-35 h-100 rounded-circle border border-light ">
+
+                        <img src="https://themewagon.github.io/venus-nextjs/images/hero/hero-profile-3.jpg"
+                            class="w-35 h-100 rounded-circle border border-light">
+                        <p class="greycolor pt-3 ps-2"> Need help? <a class="a text-decoration-none text-primary "
+                                href="#">
+                                Contact our experts</a>
+                            Tell
+                            us
+                            about your
+                            project</p>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="col col-5  height1">
+                <img src="https://themewagon.github.io/venus-nextjs/images/hero/hero-image.png" class="w-100 h-100">
+            </div>
+
+        </div>
+
+
+        <div class="row  height3">
+            <div class="col col-4 height3 ">
+                <div class="row height d-flex justify-content-center align-items-center pt-5">
+                    <div class="col col-3 height11 d-flex justify-content-center align-items-center">
+                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAACq0lEQVRIib2Wy2sUQRCHv30kGx/tI+hqfMSDgSUoZA455GAQRDSCGDE38ejNY+aQSw7idRAk4L8gehRE9OJFYgxGm4ig+EAxh6Dga3xikpUKNThMZsaZwc0PhmW6qvvrrumq2lLf6BcKaCNwTKfdtJ75nHeJchEqMAZc0WesyAJFwHVgOPQ+7Lh+fTXA+4He0HuvjrUcfDzj2H8FV4ChmPEhx/UrrQT3A42Y8YbaWgY+nTCnrLaWgDuAwRT7oOP6Ha0AH0wIc6CG+mRSFdipuZmkJvAVGAHWpviJbcRx/ZfAeqCU4vtOwH3AGgXE6TewGTiU4STicxf4CLQl+MiGuqr6sqhPnH4puDsDuFt951N8ltNOvvEs8D0YiJH47Es5QVht6pt0dyrKmhWHOWBK4q6G8CQJfy3PpVHfWuTTlXVtYUxZz8wFEOmN08BTDXlw+iVgB9CTA9yjc5ZCp1zUtaetZ5b7cDU0YUGNnzRcBvgJHMiZdmWd8wJoB3zgifXMfNQpKnGYBN4C64CBHNBA/RpuWWMyCo2eOKwfwAywCdhQALxLTms9M5Pk8K8QSrgm9DePpJjsTfNPA5e1osmlOw/cygkfcFy/VgQsu+7UC/JeT35JL18WyQXbUwTcqfCmwqXU3QDGgccZwPW0bpYG7grlIgqWtvcMuABci9jjdCovWJrG1pjGUdL8lgp0Vv9bv0oBH3Zcf3ce8Da1hcElfd4AD7Qw3AaOAlcT1pFPdDIPeHukaVS0Pcq3fQh8CwzWM5JqZ4BR3UxUJxzXX9Gb48DtWrGaekLpOB+AexrWFX3bembBeuYicAR4FDFL7d6SBSwFXSqXAAX8HLifJY2sZ6TLyd/fy6Hh1+EIBYormQK22i5lA5LDmWU9IxfvnOP61zUz7ljPSA/+K+APH/SU/oa5TVUAAAAASUVORK5CYII="
+                            class="w-35 h-100 ">
+
+                    </div>
+
+                </div>
+                <div class="row height justify-content-center align-items-center" align="center">
+                    <p class="text12 ">4.86
+                    </p>
+                </div>
+                <div class="row height " align="center">
+                    <p class="text2 ">Out of 5 stars from 3896 reviews on
+                        Google platform</p>
+                </div>
+            </div>
+            <div class="col col-4 height3 ">
+                <div class="row height d-flex justify-content-center align-items-center pt-5">
+                    <div class="col col-3 height11 d-flex justify-content-center align-items-center">
+                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAC8ElEQVRIia2XO08UYRSGn71wURxFsFAjggQT43UpSMTOgkLtrCxt/AO6nbGxnsTW0l9gY7QiodLEiim8FAIaMBITLptdL+Cyu+aQd8jnuLvzLfAm28yceZ/vds75NnPlQRkPBcAxYADoB3qBhj7LABtACVgDVqIwqKRZpoGPAkPASeAgUHOA/3kBOeAX8A1YisJgvVOwGZwFzgAHBKz7LA2QdQbwBfgUhUGtWVBSPcAEcA7oBqodQFFsVT7mMVEoVnrSwBYwCZzocJatBlCT12QS7oJteca1r1t7ACa1Jc/xQrGSawYeA457Qs2gS7+cR/yWvMeSYEuR0TYnNlZG39hp/azfup5lUr4179FCsWIs8np4Wqe3mgK1j98DX4FNPbe9OwWcd2KaqS6GsUpZFYf4MKXN9gMw70CJwmAzCoN5vUub9fZhKxQrgYEHgb6UE5xTZVpqE7OkmHZ7XhdrMAanzTYr0z+tAqIwsHflFrXBVS0G93scKjwMfWWs/qwKfppsiQ6rkjVVoVjpVoxP0enNes62ppUZahMzpJi0bTM18h5BO8FKGdx0UimM08lnEtvKe6SAC7bYiwLFbe2wc058wZm8mnhfB/CGau+gntU9l9fVRl5pcshjtA2lU7UJKK7d3R4raO9LBl4FhtucxhhosZd0ORhIxKypbn9UQ2g3ABvkagz+qbRKwqsCXgduAiPa02Yq68bxCnitb7sScVmxtsF2MVtWy3LBG0qRe8DVlOVDA7qs3xvgKfBdTcSd7bJdBuNqtAj8dqpTVbN75AlN6hrwWFsYd7ysGIs4IDtgC9qXuEo9FHy3GpFHXM3MeyEKgxKJ+junJbegOxrtXjUsr7q859zNjmUpMgscAab2ARprSp6z7jU32XEsbaaBt/sINq9ptc0dNWt1K8At4IlTFnejsjxuRGFgnv+oVZOwBnAfeAHcBW6ruvnoB/AceBaFwUyrD3z/tFljsCJiK3GhReWyS+BLYCYKg3dt3YC/UtPP4bgc8QcAAAAASUVORK5CYII="
+                            class="w-35 h-100 ">
+
+                    </div>
+
+                </div>
+                <div class="row height justify-content-center align-items-center" align="center">
+                    <p class="text12 ">364
+                    </p>
+                </div>
+                <div class="row height " align="center">
+                    <p class="text2 ">Client testimonials received in the year 2021</p>
+                </div>
+            </div>
+            <div class="col col-4 height3 ">
+                <div class="row height d-flex justify-content-center align-items-center pt-5">
+                    <div class="col col-3 height11 d-flex justify-content-center align-items-center">
+                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAaCAYAAACgoey0AAABwElEQVRIie2WP0sDQRDFfxejqHBB/IMWVha2prKwCdbWfoeAlZhCQSxsBDn0syhYW9nKoZVgJ4igQkiIhqhRRmbDcca7uYRY+eDYvWVm39vZmWG9pa0aBvjAAbCWYnoG7ISBX0/bMm8g9YBdYMNgKzaNYqW+HQb+Z5JhzrDZKFA22DmU1ScRlhO3gULkfxVodhF3rvOC+qQSjwHjwG+hkU0vdWzq/DVmMxazmSpW6nFxDnJ1L5JcJWAmQaUIquno6Ym8Hmwc5Hof85qxrYQToxFxeO/DBhXk5yz3MQC0LVk9EPwT/xksDSQOycqh2NpHSlX8QFZiT0vlObY+oWLM5L2E+ga4cF8Y+DJeR5qHmdhsrDX/1GX9TsNthSfEDVXbyiDWstYNrkM2xCHUtrmoItK+HwLDwP8w+i4qVyjJVQUWgE3gIUWxEBwCty6zi5W6nGAEONYxCXPAURj4VZfVw8CkfmmY1azOR8TIWtEYbuHqOFvLQOyWgfvIXUvClTJk9Sc91vE6sBJbm85YHR3iLE5iO5+FpIt/J1xvfWyUFd+PBEd8ok1g0BCOU5m4UEvLk2fpvjzUBsQulbAXBv4VwBedGHeqzf4DeAAAAABJRU5ErkJggg=="
+                            class="w-35 h-100  ">
+
+                    </div>
+
+                </div>
+                <div class="row height justify-content-center align-items-center" align="center">
+                    <p class="text12 ">45M+
+                    </p>
+                </div>
+                <div class="row height " align="center">
+                    <p class="text2 ">Revenue generated through new projects & marketing</p>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row   heightt d-flex justify-content-center align-items-center ">
+
+            <div class="col col-5  heightt">
+                <img src="https://themewagon.github.io/venus-nextjs/images/work-progress/progress-work.png"
+                    class="w-100 h-100">
+            </div>
+
+            <div class="col   col-5  heightt">
+                <div class="row  height">
+                    <div class="col  col-12 height d-flex">
+                        <div class="col col-1 height d-flex justify-content-center align-items-center pad">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/2/2d/Basic_green_dot.png"
+                                class="image">
+                        </div>
+                        <div class="col col-11 ">
+                            <p class="text4">Build Everything</p>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="row  height2">
+                    <h1 class="text1">Build amazing websites and landing pages with ease</h1>
+                </div>
+                <div class="row height ">
+                    <p class="text2">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                        incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse ultrices gravida.</p>
+                </div>
+                <div class="row  height2 ">
+                    <div class="col pt-3 greycolor ">
+                        <p class="h4 pb-2 mb-4  border-bottom border-primary ">UX Research and Testing</p>
+                        <p class="h4 pb-2 mb-4  border-bottom border-primary ">Product Management</p>
+                        <p class="h4 pb-2 mb-4  border-bottom border-primary ">UI & Visual Design</p>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- 
+    </div>
+
+
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <script>
+        AOS.init();
+    </script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Hand Gesture Controlled Website</title>
+
+<!-- MediaPipe -->
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  height: 4000px;
+  background: linear-gradient(180deg, #0f2027, #203a43, #2c5364);
+  color: white;
+  text-align: center;
+}
+
+h1 {
+  margin-top: 100px;
+  font-size: 48px;
+}
+
+p {
+  margin-top: 20px;
+  font-size: 20px;
+  opacity: 0.8;
+}
+
+#video {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 260px;
+  border-radius: 12px;
+  border: 3px solid #00ffcc;
+  box-shadow: 0 0 20px #00ffcc;
+}
+
+#info {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.6);
+  padding: 15px 30px;
+  border-radius: 30px;
+  font-size: 18px;
+}
+</style>
+</head>
+
+<body>
+
+<div id="info">✋ Move your hand UP / DOWN to scroll</div>
+
+<h1>Hand Gesture Website</h1>
+<p>No Mouse • No Keyboard • Only Hand ✨</p>
+
+<video id="video" autoplay muted></video>
+
+<script>
+const video = document.getElementById("video");
+const info = document.getElementById("info");
+
+// Camera access
+navigator.mediaDevices.getUserMedia({ video: true })
+  .then(stream => video.srcObject = stream);
+
+// MediaPipe Hands
+const hands = new Hands({
+  locateFile: file =>
+    `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+});
+
+hands.setOptions({
+  maxNumHands: 1,
+  modelComplexity: 1,
+  minDetectionConfidence: 0.7,
+  minTrackingConfidence: 0.7
+});
+
+let lastX = null;
+
+hands.onResults(results => {
+  if (!results.multiHandLandmarks) return;
+
+  const hand = results.multiHandLandmarks[0];
+
+  // Index finger tip
+  const x = hand[8].x;
+  const y = hand[8].y;
+
+  // Scroll control
+  if (y < 0.35) {
+    window.scrollBy(0, -25);
+    info.innerText = "⬆️ Scrolling Up";
+  } 
+  else if (y > 0.65) {
+    window.scrollBy(0, 25);
+    info.innerText = "⬇️ Scrolling Down";
+  } 
+  else {
+    info.innerText = "✋ Hand Detected";
+  }
+
+  // Swipe detection
+  if (lastX !== null) {
+    if (x - lastX > 0.15) {
+      alert("👉 Right Swipe Detected");
+      lastX = null;
+    }
+    if (lastX - x > 0.15) {
+      alert("👈 Left Swipe Detected");
+      lastX = null;
+    }
+  }
+  lastX = x;
+});
+
+// Camera setup
+const camera = new Camera(video, {
+  onFrame: async () => {
+    await hands.send({ image: video });
+  },
+  width: 640,
+  height: 480
+});
+camera.start();
+</script>
+
+</body>
+</html>

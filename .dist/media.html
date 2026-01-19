@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+#Parent{
+
+        width:100% ;
+        height: 700px;
+       
+    }
+
+    #div{
+        width: 100%;
+        height: 350px;
+        background-color: rgb(255, 0, 0);
+       
+       
+    }#div2{
+        width: 100%;
+        height: 350px;
+        background-color: rgb(59, 27, 203);
+       
+    } 
+    @media screen   and (max-width:480px){
+        #div, #div2{
+            width: 100%;
+        }
+    }
+       @media screen   and (min-width:480px){
+
+        #Parent{
+
+        
+        height: 100%;
+       display:flex ; 
+    }
+        #div{
+            width: 10%;
+        }
+        #div2{
+            width: 90%;
+        }
+    }
+         @media screen   and (min-width:768px){
+             #Parent{
+
+        
+        height: 100%;
+       display:block ; 
+             }
+              #div{
+            background-color: blueviolet;
+             width: 100%;
+        }
+        #div2{
+            background-color: coral;
+            width: 100%;
+        }
+    }  
+    </style>                                                             
+</head>
+<body>
+    <div id="Parent" >
+<div id="div"></div>
+<div id="div2"></div>
+</div>
+</body>
+</html>

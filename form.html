@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Complete HTML Form Example</title>
+</head>
+<body>
+
+<h2>Registration Form</h2>
+
+<form action="/submit" method="POST" enctype="multipart/form-data">
+
+  <!-- Name -->
+  <label for="name">Full Name:</label><br>
+  <input type="text" id="name" name="name" required minlength="3"><br><br>
+
+  <!-- Email -->
+  <label for="email">Email:</label><br>
+  <input type="email" id="email" name="email" required><br><br>
+
+  <!-- Password -->
+  <label for="password">Password:</label><br>
+  <input type="password" id="password" name="password" required minlength="6"><br><br>
+
+  <!-- Gender (Radio) -->
+  <label>Gender:</label><br>
+  <input type="radio" name="gender" value="male"> Male
+  <input type="radio" name="gender" value="female"> Female
+  <input type="radio" name="gender" value="other"> Other
+  <br><br>
+
+  <!-- Interests (Checkboxes) -->
+  <label>Interests:</label><br>
+  <input type="checkbox" name="interests" value="coding"> Coding
+  <input type="checkbox" name="interests" value="music"> Music
+  <input type="checkbox" name="interests" value="sports"> Sports
+  <br><br>
+
+  <!-- Country (Select) -->
+  <label for="country">Country:</label><br>
+  <select id="country" name="country">
+    <option value="">--Select--</option>
+    <option value="in">India</option>
+    <option value="us">USA</option>
+    <option value="uk">UK</option>
+  </select><br><br>
+
+  <!-- Textarea -->
+  <label for="about">About You:</label><br>
+  <textarea id="about" name="about" rows="4"></textarea>
+  <br><br>
+
+  <!-- File Upload -->
+  <label for="photo">Upload Profile Photo:</label><br>
+  <input type="file" id="photo" name="photo" accept="image/*"><br><br>
+
+  <!-- Hidden Field -->
+  <input type="hidden" name="form-name" value="registration">
+
+  <!-- Submit and Reset -->
+  <button type="submit">Submit</button>
+  <button type="reset">Reset</button>
+
+</form>
+
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AOS Example</title>
+
+    <!-- AOS CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css"/>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 50px;
+        }
+        .box {
+            width: 300px;
+            height: 200px;
+            background: #4b9eff;
+            margin: 50px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 22px;
+            border-radius: 12px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1 data-aos="fade-down">AOS Animation Demo</h1>
+
+    <div class="box" data-aos="fade-up">Fade Up</div>
+    <div class="box" data-aos="zoom-in">Zoom In</div>
+    <div class="box" data-aos="flip-left">Flip Left</div>
+
+    <!-- AOS JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 1000,   // Animation speed
+            once: true        // Animate only once
+        });
+    </script>
+</body>
+</html>

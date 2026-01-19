@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Calculator</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #7f00ff, #e100ff);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .calculator {
+            width: 360px;
+            background: #1f1f1f;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .display {
+            height: 80px;
+            background: #000;
+            color: #0f0;
+            font-size: 32px;
+            border-radius: 10px;
+            padding: 10px;
+            text-align: right;
+            overflow-x: auto;
+        }
+
+        .btn-cal {
+            height: 65px;
+            font-size: 22px;
+            border-radius: 12px;
+            border: none;
+            transition: 0.2s;
+        }
+
+        .btn-cal:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-number {
+            background: #2c2c2c;
+            color: #fff;
+        }
+
+        .btn-operator {
+            background: #ff9800;
+            color: #000;
+        }
+
+        .btn-clear {
+            background: #e53935;
+            color: #fff;
+        }
+
+        .btn-equal {
+            background: #4caf50;
+            color: #fff;
+            height: 65px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="calculator">
+        <div id="display" class="display mb-3">0</div>
+
+        <div class="row g-2">
+            <div class="col-3"><button class="btn btn-cal btn-number w-100" onclick="press('7')">7</button></div>
+            <div class="col-3"><button class="btn btn-cal btn-number w-100" onclick="press('8')">8</button></div>
+            <div class="col-3"><button class="btn btn-cal btn-number w-100" onclick="press('9')">9</button></div>
+            <div class="col-3"><button class="btn btn-cal btn-operator w-100" onclick="press('/')">÷</button></div>
+
+            <div class="col-3"><button class="btn btn-cal btn-number w-100" onclick="press('4')">4</button></div>
+            <div class="col-3"><button class="btn btn-cal btn-number w-100" onclick="press('5')">5</button></div>
+            <div class="col-3"><button class="btn btn-cal btn-number w-100" onclick="press('6')">6</button></div>
+            <div class="col-3"><button class="btn btn-cal btn-operator w-100" onclick="press('*')">×</button></div>
+
+            <div class="col-3"><button class="btn btn-cal btn-number w-100" onclick="press('1')">1</button></div>
+            <div class="col-3"><button class="btn btn-cal btn-number w-100" onclick="press('2')">2</button></div>
+            <div class="col-3"><button class="btn btn-cal btn-number w-100" onclick="press('3')">3</button></div>
+            <div class="col-3"><button class="btn btn-cal btn-operator w-100" onclick="press('-')">−</button></div>
+
+            <div class="col-3"><button class="btn btn-cal btn-number w-100" onclick="press('.')">.</button></div>
+            <div class="col-3"><button class="btn btn-cal btn-number w-100" onclick="press('0')">0</button></div>
+            <div class="col-3"><button class="btn btn-cal btn-operator w-100" onclick="press('+')">+</button></div>
+            <div class="col-3"><button class="btn btn-cal btn-clear w-100" onclick="clearDisplay()">C</button></div>
+
+            <div class="col-12">
+                <button class="btn btn-cal btn-equal w-100" onclick="calculate()">=</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let display = document.getElementById("display");
+        let expression = "";
+
+        function press(value) {
+            if (display.innerText === "0") {
+                expression = value;
+            } else {
+                expression += value;
+            }
+            display.innerText = expression;
+        }
+
+        function clearDisplay() {
+            expression = "";
+            display.innerText = "0";
+        }
+
+        function calculate() {
+            try {
+                expression = eval(expression).toString();
+                display.innerText = expression;
+            } catch {
+                display.innerText = "Error";
+                expression = "";
+            }
+        }
+    </script>
+
+</body>
+
+</html>

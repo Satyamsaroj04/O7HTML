@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Netflix clone</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+
+  <style>
+    :root{
+      --overlay-dark: rgba(0,0,0,0.55);
+      --glass: rgba(255,255,255,0.06);
+    }
+
+    /* Full page hero with background image + dark overlay */
+    .hero {
+      position: relative;
+      width: 100%;
+      min-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      color: #fff;
+      font-family: Arial, Helvetica, sans-serif;
+      overflow: hidden;
+      background-image: url('https://wallpapercave.com/wp/wp15747910.jpg');
+      background-size: cover;
+      background-position: center;
+    }
+
+    /* dark overlay to make text readable */
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.85) 80%);
+      z-index: 0;
+    }
+
+    /* nav and content sit above overlay */
+    .hero .topbar,
+    .hero .hero-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    /* top navigation */
+    .brand {
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      color: #e50914; /* Netflix red */
+      font-size: 1.5rem;
+    }
+
+    .nav-links h6{
+      margin: 0;
+      color: #fff;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .nav-links h6:hover{ text-decoration: underline; }
+
+    /* hero content block (left) */
+    .hero-content {
+      padding: 4rem 2rem 2rem 2rem;
+      display: flex;
+      gap: 2rem;
+      align-items: flex-start;
+      width: 100%;
+    }
+
+    .hero-left {
+      max-width: 55%;
+    }
+
+    .hero-left h1 {
+      margin: 0 0 1rem 0;
+      font-size: clamp(2rem, 4.5vw, 4rem);
+      color: #fff;
+    }
+
+    .hero-left p {
+      font-size: 1.05rem;
+      color: #e6e6e6;
+      max-width: 70%;
+    }
+
+    /* cards container sits below hero */
+    .content-section {
+      background: #0b0b0b;
+      color: #fff;
+      padding: 2.5rem 1rem 4rem;
+    }
+
+    .section-title {
+      font-weight: 700;
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+    }
+
+    .card .card-img-top{
+      height: 330px;
+      object-fit: cover;
+    }
+
+    /* small helper to center button inside card footer */
+    .card .btn {
+      width: 100%;
+    }
+
+    /* responsive tweaks */
+    @media (max-width: 991px){
+      .hero-left { max-width: 100%; }
+      .hero-left p { max-width: 100%; }
+      .hero-content { padding: 2rem 1rem; }
+      .card .card-img-top { height: 240px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hero -->
+  <header class="hero">
+    <nav class="topbar py-3 container d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center gap-3">
+        <div class="brand">NETFLIX CLONE</div>
+      </div>
+
+      <div class="nav-links d-none d-md-flex align-items-center gap-4">
+        <h6>Home</h6>
+        <h6>Series</h6>
+        <h6>Movies</h6>
+        <h6>New & Popular</h6>
+        <h6>My List</h6>
+      </div>
+
+      <!-- small screen menu icon -->
+      <div class="d-md-none text-white">
+        <button class="btn btn-outline-light btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#mobileMenu">Menu</button>
+      </div>
+    </nav>
+
+    <!-- optional collapsed mobile menu -->
+    <div class="collapse d-md-none container" id="mobileMenu">
+      <div class="bg-dark p-3 rounded mb-3">
+        <div class="d-flex flex-column gap-2">
+          <a class="text-white" href="#">Home</a>
+          <a class="text-white" href="#">Series</a>
+          <a class="text-white" href="#">Movies</a>
+          <a class="text-white" href="#">New & Popular</a>
+          <a class="text-white" href="#">My List</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-content container">
+      <div class="hero-left">
+        <h1>Trending Now</h1>
+        <p>
+          Discover what's trending on this prototype. Click any card to watch the trailer.
+          The dark overlay keeps text readable on top of the background image.
+        </p>
+        <div class="mt-4 d-flex gap-2">
+          <a class="btn btn-danger btn-lg" href="#" role="button">Play</a>
+          <a class="btn btn-outline-light btn-lg" href="#" role="button">More Info</a>
+        </div>
+      </div>
+
+      <!-- right side (could be small promo or leave empty) -->
+      <div class="ms-auto d-none d-lg-block" style="min-width:220px;">
+        <!-- small glass card -->
+        <div style="background:var(--glass); padding:1rem; border-radius:10px;">
+          <h6 style="margin:0 0 .5rem 0">My List</h6>
+          <p style="margin:0; font-size:.9rem; color:#ddd">Add titles to watch later</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Content section with cards -->
+  <main class="content-section">
+    <div class="container">
+      <div class="section-title">TRENDING SERIES</div>
+
+      <div class="row g-4">
+        <!-- Card 1 -->
+        <div class="col-12 col-sm-6 col-md-4">
+          <div class="card shadow-sm h-100">
+            <img src="https://wallpapercave.com/wp/wp6581266.jpg" class="card-img-top" alt="Money Heist">
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title text-center mb-3">MONEY HEIST</h5>
+              <p class="card-text text-muted small mb-3">Heist drama with twists and smart planning.</p>
+              <a href="https://youtu.be/_InqQJRqGW4?si=-NqawkwaYsxQlJm0" target="_blank" rel="noopener" class="btn btn-primary mt-auto">WATCH TRAILER</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="col-12 col-sm-6 col-md-4">
+          <div class="card shadow-sm h-100">
+            <img src="https://wallpapercave.com/uwp/uwp3867921.jpeg" class="card-img-top" alt="The Witcher">
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title text-center mb-3">THE WITCHER</h5>
+              <p class="card-text text-muted small mb-3">Fantasy series based on the books.</p>
+              <a href="https://youtu.be/_InqQJRqGW4?si=-NqawkwaYsxQlJm0" target="_blank" rel="noopener" class="btn btn-primary mt-auto">WATCH TRAILER</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="col-12 col-sm-6 col-md-4">
+          <div class="card shadow-sm h-100">
+            <img src="https://wallpapercave.com/dwp2x/wp9761345.jpg" class="card-img-top" alt="Dark">
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title text-center mb-3">DARK</h5>
+              <p class="card-text text-muted small mb-3">Sci-fi thriller — timelines and secrets.</p>
+              <a href="https://youtu.be/_InqQJRqGW4?si=-NqawkwaYsxQlJm0" target="_blank" rel="noopener" class="btn btn-primary mt-auto">WATCH TRAILER</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add more cards here as needed -->
+      </div>
+    </div>
+  </main>
+
+  <!-- Bootstrap JS bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+    crossorigin="anonymous"></script>
+</body>
+</html>

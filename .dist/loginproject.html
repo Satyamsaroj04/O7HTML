@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ELEXA - Archive Access</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;400;600&family=Playfair+Display:ital,wght@1,500&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --brand-teal: rgb(0, 84, 97);
+  --brand-teal-light: rgb(0, 160, 180);
+  --brand-teal-glow: rgba(0, 84, 97, 0.4);
+  --bg-dark: #020506;
+  --transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) translateZ(0px); }
+  50% { transform: translateY(-20px) translateZ(30px); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body {
+  height: 100vh;
+  background: radial-gradient(circle at 20% 50%, #051a1d 0%, var(--bg-dark) 100%);
+  font-family: 'Inter', sans-serif;
+  overflow: hidden;
+  color: #fff;
+  perspective: 3000px;
+  transform-style: preserve-3d;
+}
+
+/* Depth Layers */
+body::before {
+  content: '';
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  background: 
+    radial-gradient(circle at 30% 40%, rgba(0, 160, 180, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 70% 60%, rgba(0, 84, 97, 0.05) 0%, transparent 50%);
+  animation: float 20s ease-in-out infinite;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* TOP LOGO BRANDING (ELEXA IMAGE) */
+.header-logo {
+  position: absolute;
+  top: 40px;
+  left: 60px;
+  z-index: 100;
+  transform: translateZ(100px);
+  transition: transform 0.3s ease;
+}
+
+.header-logo img {
+  height: 60px;
+  width: auto;
+  filter: drop-shadow(0 0 30px rgba(0, 160, 180, 0.4)) drop-shadow(0 10px 20px rgba(0,0,0,0.5));
+  transition: filter 0.3s ease;
+}
+
+.header-logo:hover img {
+  filter: drop-shadow(0 0 50px rgba(0, 160, 180, 0.6)) drop-shadow(0 10px 30px rgba(0,0,0,0.7));
+}
+
+/* THE FLOATING TINY IMAGE SHARDS */
+.tiny-shard {
+  position: absolute;
+  width: 100px;
+  height: 140px;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 160, 180, 0.3);
+  box-shadow: 
+    0 10px 40px rgba(0,0,0,0.6),
+    0 0 20px rgba(0, 160, 180, 0.1),
+    inset 0 0 20px rgba(0, 160, 180, 0.05);
+  cursor: pointer;
+  transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s, box-shadow 0.4s;
+  z-index: 5;
+  background: #000;
+  transform-style: preserve-3d;
+  animation: float 6s ease-in-out infinite;
+}
+
+.tiny-shard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  animation: shimmer 3s infinite;
+  z-index: 10;
+}
+
+.tiny-shard img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.5;
+  filter: saturate(0.5) brightness(0.8);
+  transition: 0.4s;
+  transform: translateZ(0);
+}
+
+.tiny-shard:hover {
+  transform: scale(1.25) rotate(0deg) translateZ(50px) !important;
+  z-index: 1000;
+  border-color: var(--brand-teal-light);
+  box-shadow: 
+    0 30px 80px rgba(0,0,0,0.8),
+    0 0 60px rgba(0, 160, 180, 0.4),
+    inset 0 0 40px rgba(0, 160, 180, 0.1);
+  animation: none;
+}
+
+.tiny-shard:hover img { 
+  opacity: 1; 
+  filter: none;
+  transform: scale(1.1) translateZ(20px);
+}
+
+/* MAIN SCENE */
+.scene {
+  position: relative;
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  align-items: center;
+  z-index: 10;
+}
+
+.view-panel {
+  flex: 1.2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  perspective: 2500px;
+}
+
+.stack {
+  position: relative;
+  width: 400px;
+  height: 540px;
+  transform-style: preserve-3d;
+  cursor: pointer;
+  z-index: 20;
+}
+
+.card {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: var(--transition);
+  box-shadow: 
+    0 50px 120px rgba(0,0,0,0.9),
+    0 0 40px rgba(0, 160, 180, 0.1),
+    inset 0 0 60px rgba(0, 160, 180, 0.05);
+  border: 1px solid rgba(0, 160, 180, 0.2);
+  transform-style: preserve-3d;
+}
+
+.card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, transparent 0%, rgba(0, 160, 180, 0.1) 100%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 1.5s ease;
+  transform-style: preserve-3d;
+}
+
+.stack:hover .card[data-index="0"] img { 
+  transform: scale(1.1) translateZ(30px);
+}
+
+/* 3D Depth Logic with Enhanced Perspective */
+.card[data-index="0"] { 
+  transform: translateZ(250px); 
+  z-index: 3; 
+  opacity: 1;
+  filter: brightness(1.1);
+}
+.card[data-index="1"] { 
+  transform: translateZ(80px) translateX(80px) rotateY(-25deg); 
+  z-index: 2; 
+  opacity: 0.6;
+  filter: brightness(0.8);
+}
+.card[data-index="2"] { 
+  transform: translateZ(-80px) translateX(150px) rotateY(-40deg); 
+  z-index: 1; 
+  opacity: 0.3;
+  filter: brightness(0.6);
+}
+
+/* RIGHT PANEL: LOGIN */
+.right-panel {
+  flex: 0.8;
+  display: flex;
+  justify-content: center;
+  padding-right: 8%;
+}
+
+.login-glass {
+  width: 100%;
+  max-width: 400px;
+  padding: 60px;
+  background: rgba(0, 20, 25, 0.4);
+  backdrop-filter: blur(40px);
+  border-radius: 4px;
+  border-left: 4px solid var(--brand-teal-light);
+  box-shadow: 
+    0 40px 100px rgba(0,0,0,0.5),
+    0 0 60px rgba(0, 160, 180, 0.1),
+    inset 0 0 100px rgba(0, 160, 180, 0.02);
+  transform: translateZ(50px);
+  transform-style: preserve-3d;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-glass:hover {
+  transform: translateZ(80px);
+  box-shadow: 
+    0 50px 120px rgba(0,0,0,0.6),
+    0 0 80px rgba(0, 160, 180, 0.2),
+    inset 0 0 100px rgba(0, 160, 180, 0.03);
+}
+
+.login-glass h3 {
+  font-family: 'Inter', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  font-size: 11px;
+  color: var(--brand-teal-light);
+  margin-bottom: 10px;
+}
+
+.login-glass h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 34px;
+  font-style: italic;
+  font-weight: 500;
+  margin-bottom: 40px;
+  color: #fff;
+}
+
+.input-box { margin-bottom: 25px; }
+.input-box input {
+  width: 100%;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 18px;
+  color: white;
+  outline: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  letter-spacing: 1px;
+  transition: 0.3s;
+}
+
+.input-box input:focus {
+  border-color: var(--brand-teal-light);
+  background: rgba(0, 160, 180, 0.05);
+}
+
+.btn-enter {
+  width: 100%;
+  padding: 20px;
+  background: var(--brand-teal-light);
+  color: #fff;
+  border: none;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 12px;
+  transition: 0.4s;
+  position: relative;
+  overflow: hidden;
+  transform: translateZ(20px);
+  box-shadow: 0 10px 30px rgba(0, 160, 180, 0.3);
+}
+
+.btn-enter::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255,255,255,0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.btn-enter:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.btn-enter:hover {
+  background: #fff;
+  color: var(--bg-dark);
+  box-shadow: 
+    0 0 30px rgba(255,255,255,0.2),
+    0 20px 60px rgba(0, 160, 180, 0.4);
+  transform: translateZ(40px) scale(1.02);
+}
+
+@media (max-width: 1000px) {
+  .scene { flex-direction: column; overflow-y: auto; }
+  .header-logo { left: 50%; transform: translateX(-50%) translateZ(100px); top: 20px; }
+  .view-panel { margin-top: 120px; height: 50vh; }
+  .stack { width: 300px; height: 420px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header-logo">
+  <img src="/elexa.png" alt="ELEXA">
+</div>
+
+<div id="shard-container"></div>
+
+<div class="scene">
+  <div class="view-panel">
+    <div class="stack" id="stack" onclick="cycleMain()">
+      <div class="card" data-index="0"><img src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&q=80&w=800" id="main-img"></div>
+      <div class="card" data-index="1"><img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=800"></div>
+      <div class="card" data-index="2"><img src="https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&q=80&w=800"></div>
+    </div>
+  </div>
+
+  <div class="right-panel">
+    <div class="login-glass">
+      <h3>Mon Petit Secret</h3>
+      <h1>Archive Access</h1>
+      
+      <div class="input-box"><input type="text" placeholder="IDENTITY CODE"></div>
+      <div class="input-box"><input type="password" placeholder="PASSPHRASE"></div>
+      
+      <button class="btn-enter">Unlock Data</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const stack = document.getElementById('stack');
+const shardContainer = document.getElementById('shard-container');
+const mainImg = document.getElementById('main-img');
+
+const imagePool = [
+  "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&q=80&w=600",
+  "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=600",
+  "https://images.unsplash.com/photo-1581044777550-4cfa60707c03?auto=format&fit=crop&q=80&w=600",
+  "https://images.unsplash.com/photo-1529139513477-323c66b62adc?auto=format&fit=crop&q=80&w=600",
+  "https://images.unsplash.com/photo-1509319117193-57bab727e09d?auto=format&fit=crop&q=80&w=600",
+  "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=600"
+];
+
+let isBusy = false;
+
+// Initialize Shards on Load
+function initShards() {
+  for(let i=0; i<8; i++) {
+    createShard(true);
+  }
+}
+
+function createShard(initial = false) {
+  const shard = document.createElement('div');
+  shard.className = 'tiny-shard';
+  
+  const side = Math.random() > 0.5 ? 'left' : 'right';
+  const x = side === 'left' ? Math.random() * 20 : 75 + Math.random() * 20;
+  const y = Math.random() * 80 + 10;
+  const rot = (Math.random() - 0.5) * 40;
+  
+  shard.style.left = `${x}%`;
+  shard.style.top = `${y}%`;
+  shard.style.transform = initial ? `rotate(${rot}deg)` : `rotate(${rot}deg) scale(0)`;
+  shard.style.animationDelay = `${Math.random() * 3}s`;
+  
+  const imgSrc = imagePool[Math.floor(Math.random() * imagePool.length)];
+  shard.innerHTML = `<img src="${imgSrc}">`;
+  
+  shardContainer.appendChild(shard);
+  if(!initial) setTimeout(() => shard.style.transform = `rotate(${rot}deg) scale(1)`, 10);
+
+  shard.onclick = (e) => {
+    e.stopPropagation();
+    flyToCenter(shard, imgSrc);
+  };
+}
+
+function flyToCenter(shard, newSrc) {
+  if(isBusy) return;
+  isBusy = true;
+
+  const rect = mainImg.getBoundingClientRect();
+  const shardRect = shard.getBoundingClientRect();
+
+  // Create Flight Clone
+  const flight = shard.cloneNode(true);
+  document.body.appendChild(flight);
+  flight.style.position = 'fixed';
+  flight.style.left = shardRect.left + 'px';
+  flight.style.top = shardRect.top + 'px';
+  flight.style.zIndex = '2000';
+  flight.style.transition = 'all 0.8s cubic-bezier(0.19, 1, 0.22, 1)';
+
+  shard.style.opacity = '0';
+
+  requestAnimationFrame(() => {
+    flight.style.left = (rect.left + rect.width/2 - 50) + 'px';
+    flight.style.top = (rect.top + rect.height/2 - 70) + 'px';
+    flight.style.transform = 'scale(4) rotate(0deg)';
+    flight.style.opacity = '0';
+  });
+
+  setTimeout(() => {
+    mainImg.src = newSrc;
+    flight.remove();
+    shard.remove();
+    createShard(); // Replace the missing shard
+    isBusy = false;
+  }, 800);
+}
+
+function cycleMain() {
+  if(isBusy) return;
+  isBusy = true;
+  const cards = document.querySelectorAll('.card');
+  cards.forEach(card => {
+    let idx = parseInt(card.getAttribute('data-index'));
+    idx = (idx - 1 + cards.length) % cards.length;
+    card.setAttribute('data-index', idx);
+  });
+  createShard(); // Spawn a new one on every main click
+  setTimeout(() => isBusy = false, 800);
+}
+
+// 3D Mouse Tilt with Enhanced Parallax
+let parallaxLayers = [];
+
+document.addEventListener('mousemove', (e) => {
+  const x = (window.innerWidth / 2 - e.pageX) / 60;
+  const y = (window.innerHeight / 2 - e.pageY) / 60;
+  
+  // Main stack tilt
+  stack.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
+  
+  // Parallax effect on shards
+  const shards = document.querySelectorAll('.tiny-shard');
+  shards.forEach((shard, idx) => {
+    const depth = (idx % 3 + 1) * 0.5;
+    const currentTransform = shard.style.transform.match(/rotate\([^)]+\)/)?.[0] || '';
+    shard.style.transform = `${currentTransform} translate(${x * depth}px, ${y * depth}px)`;
+  });
+  
+  // Subtle parallax on login panel
+  const loginGlass = document.querySelector('.login-glass');
+  if(loginGlass) {
+    loginGlass.style.transform = `translateZ(50px) translate(${-x * 0.3}px, ${-y * 0.3}px)`;
+  }
+  
+  // Header logo parallax
+  const headerLogo = document.querySelector('.header-logo');
+  if(headerLogo) {
+    headerLogo.style.transform = `translateZ(100px) translate(${-x * 0.5}px, ${-y * 0.5}px)`;
+  }
+});
+
+initShards();
+</script>
+
+</body>
+</html>

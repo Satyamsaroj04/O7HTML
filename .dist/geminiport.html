@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Satyam Saroj — Creative Developer</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<style>
+:root {
+    --primary-blue: #4a8eff;
+    --bg-dark: #050a14;
+    --bg-light: #f5f5f7;
+    --text-dark: #ffffff;
+    --text-light: #1d1d1f;
+    --transition: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background: var(--bg-dark);
+    color: var(--text-dark);
+    font-family: 'Space Grotesk', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+    transition: background var(--transition), color var(--transition);
+}
+
+body.light-mode {
+    background: var(--bg-light);
+    color: var(--text-light);
+}
+
+/* --- UI COMPONENTS --- */
+
+.cursor-dot, .cursor-ring {
+    position: fixed;
+    pointer-events: none;
+    z-index: 99999;
+    mix-blend-mode: difference;
+    transform: translate(-50%, -50%);
+}
+.cursor-dot { width: 8px; height: 8px; background: var(--primary-blue); border-radius: 50%; }
+.cursor-ring { 
+    width: 40px; height: 40px; border: 1.5px solid var(--primary-blue); border-radius: 50%; 
+    transition: width 0.3s, height 0.3s, border-width 0.3s;
+}
+
+#three-container {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+}
+
+nav {
+    position: fixed;
+    top: 0; width: 100%;
+    padding: 30px 70px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+body.light-mode nav { border-bottom: 1px solid rgba(0,0,0,0.1); }
+
+.logo {
+    font-family: 'Syncopate', sans-serif;
+    font-weight: 700;
+    letter-spacing: 5px;
+    background: linear-gradient(90deg, #fff, var(--primary-blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.theme-toggle {
+    width: 50px; height: 50px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+}
+
+/* --- SECTIONS --- */
+
+section {
+    position: relative;
+    padding: 150px 70px;
+    z-index: 1;
+}
+
+.hero {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.hero-title {
+    font-family: 'Archivo', sans-serif;
+    font-size: clamp(3rem, 10vw, 8rem);
+    font-weight: 900;
+    line-height: 0.9;
+    text-transform: uppercase;
+}
+
+.typing-container {
+    height: 100px;
+    color: var(--primary-blue);
+    font-family: 'Syncopate', sans-serif;
+    font-size: 1.5rem;
+}
+
+.project-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 40px;
+}
+
+.project-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 40px;
+    border-radius: 20px;
+    overflow: hidden;
+    transition: transform 0.4s;
+}
+
+.project-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--primary-blue);
+}
+
+.magnetic-btn {
+    display: inline-block;
+    padding: 20px 40px;
+    background: var(--primary-blue);
+    color: white;
+    text-decoration: none;
+    font-weight: 700;
+    border-radius: 50px;
+    margin-top: 30px;
+    transition: transform 0.1s linear;
+}
+
+.scroll-progress {
+    position: fixed;
+    top: 0; left: 0; height: 4px;
+    background: var(--primary-blue);
+    z-index: 10001;
+}
+
+@media (max-width: 768px) {
+    section { padding: 100px 30px; }
+    nav { padding: 20px 30px; }
+    cursor-dot, .cursor-ring { display: none; }
+    body { cursor: auto; }
+}
+</style>
+</head>
+
+<body>
+<div class="scroll-progress" id="progress"></div>
+<div class="cursor-dot" id="dot"></div>
+<div class="cursor-ring" id="ring"></div>
+
+<nav>
+    <div class="logo">SATYAM</div>
+    <div class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i></div>
+</nav>
+
+<div id="three-container"></div>
+
+<main>
+    <section class="hero">
+        <div class="hero-sub">CREATIVE DEVELOPER Portfolio 2026</div>
+        <h1 class="hero-title">Engineering<br>Experience</h1>
+        <div class="typing-container">
+            <span id="typed"></span><span class="cursor">|</span>
+        </div>
+        <a href="#work" class="magnetic-btn">VIEW WORK</a>
+    </section>
+
+    <section id="work">
+        <h2 style="font-size: 3rem; margin-bottom: 50px;">Selected Projects</h2>
+        <div class="project-grid">
+            <div class="project-card">
+                <div style="height: 200px; background: #111; margin-bottom: 20px; border-radius: 10px;"></div>
+                <h3>Netflix Engine</h3>
+                <p>High-performance UI clone with real-time API integration.</p>
+            </div>
+            <div class="project-card">
+                <div style="height: 200px; background: #111; margin-bottom: 20px; border-radius: 10px;"></div>
+                <h3>Spatial Interiors</h3>
+                <p>3D furniture configurator using Three.js and React.</p>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script>
+// --- CONFIGURATION & STATE ---
+const state = {
+    mouseX: 0, mouseY: 0,
+    dotX: 0, dotY: 0,
+    ringX: 0, ringY: 0,
+    isLightMode: false
+};
+
+// --- CURSOR LOGIC ---
+document.addEventListener('mousemove', (e) => {
+    state.mouseX = e.clientX;
+    state.mouseY = e.clientY;
+});
+
+function updateCursor() {
+    state.dotX += (state.mouseX - state.dotX) * 0.2;
+    state.dotY += (state.mouseY - state.dotY) * 0.2;
+    state.ringX += (state.mouseX - state.ringX) * 0.1;
+    state.ringY += (state.mouseY - state.ringY) * 0.1;
+
+    document.getElementById('dot').style.left = `${state.dotX}px`;
+    document.getElementById('dot').style.top = `${state.dotY}px`;
+    document.getElementById('ring').style.left = `${state.ringX}px`;
+    document.getElementById('ring').style.top = `${state.ringY}px`;
+    
+    requestAnimationFrame(updateCursor);
+}
+updateCursor();
+
+// --- MAGNETIC BUTTONS ---
+const magneticBtns = document.querySelectorAll('.magnetic-btn, .theme-toggle');
+magneticBtns.forEach(btn => {
+    btn.addEventListener('mousemove', (e) => {
+        const rect = btn.getBoundingClientRect();
+        const x = (e.clientX - rect.left - rect.width/2) * 0.4;
+        const y = (e.clientY - rect.top - rect.height/2) * 0.4;
+        gsap.to(btn, { x, y, duration: 0.3 });
+    });
+    btn.addEventListener('mouseleave', () => {
+        gsap.to(btn, { x: 0, y: 0, duration: 0.5, ease: "elastic.out(1, 0.3)" });
+    });
+});
+
+// --- THREE.JS BACKGROUND ---
+let scene, camera, renderer, mesh;
+
+function initThree() {
+    scene = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.getElementById('three-container').appendChild(renderer.domElement);
+
+    const geometry = new THREE.TorusKnotGeometry(10, 3, 100, 16);
+    const material = new THREE.MeshStandardMaterial({ 
+        color: 0x4a8eff, 
+        wireframe: true,
+        emissive: 0x4a8eff,
+        emissiveIntensity: 0.5
+    });
+    mesh = new THREE.Mesh(geometry, material);
+    scene.add(mesh);
+
+    const light = new THREE.PointLight(0xffffff, 1);
+    light.position.set(20, 20, 20);
+    scene.add(light);
+    scene.add(new THREE.AmbientLight(0xffffff, 0.2));
+
+    camera.position.z = 30;
+}
+
+function animateThree() {
+    requestAnimationFrame(animateThree);
+    mesh.rotation.x += 0.005;
+    mesh.rotation.y += 0.005;
+
+    // Mouse Influence
+    const targetX = (state.mouseX / window.innerWidth - 0.5) * 5;
+    const targetY = (state.mouseY / window.innerHeight - 0.5) * 5;
+    mesh.position.x += (targetX - mesh.position.x) * 0.05;
+    mesh.position.y += (-targetY - mesh.position.y) * 0.05;
+
+    renderer.render(scene, camera);
+}
+
+initThree();
+animateThree();
+
+// --- TYPING EFFECT ---
+const phrases = ["FRONTEND ARCHITECT", "JAVA DEVELOPER", "UI/UX DESIGNER"];
+let i = 0, j = 0, currentPhrase = [], isDeleting = false;
+
+function type() {
+    const typedTarget = document.getElementById('typed');
+    if (i < phrases.length) {
+        if (!isDeleting && j <= phrases[i].length) {
+            typedTarget.innerHTML = phrases[i].substring(0, j);
+            j++;
+        }
+        if (isDeleting && j <= phrases[i].length) {
+            typedTarget.innerHTML = phrases[i].substring(0, j);
+            j--;
+        }
+        if (j == phrases[i].length) { isDeleting = true; }
+        if (isDeleting && j == 0) {
+            currentPhrase = [];
+            isDeleting = false;
+            i++;
+            if (i == phrases.length) i = 0;
+        }
+    }
+    setTimeout(type, isDeleting ? 50 : 150);
+}
+type();
+
+// --- THEME TOGGLE ---
+document.getElementById('themeToggle').addEventListener('click', () => {
+    document.body.classList.toggle('light-mode');
+    state.isLightMode = !state.isLightMode;
+    const newColor = state.isLightMode ? 0x1d1d1f : 0x4a8eff;
+    gsap.to(mesh.material.color, { r: (newColor >> 16 & 255)/255, g: (newColor >> 8 & 255)/255, b: (newColor & 255)/255 });
+});
+
+// --- SCROLL PROGRESS ---
+window.addEventListener('scroll', () => {
+    const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const scrolled = (winScroll / height) * 100;
+    document.getElementById("progress").style.width = scrolled + "%";
+});
+</script>
+</body>
+</html>

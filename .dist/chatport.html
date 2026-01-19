@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Satyam Saroj — Creative Frontend Developer</title>
+
+<!-- SEO -->
+<meta name="description" content="Satyam Saroj — Frontend Developer specializing in GSAP animations, Three.js, modern UI/UX and high-performance web experiences.">
+<meta name="keywords" content="Frontend Developer, GSAP, Three.js, Java Developer, UI Developer, Portfolio">
+<meta name="author" content="Satyam Saroj">
+
+<!-- Open Graph -->
+<meta property="og:title" content="Satyam Saroj — Creative Frontend Developer">
+<meta property="og:description" content="Immersive animated websites using GSAP, Three.js & modern frontend engineering.">
+<meta property="og:type" content="website">
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<!-- GSAP -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<!-- Three.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
+
+<style>
+/* =====================
+   CORE RESET
+===================== */
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{
+background:#000;color:#fff;
+font-family:'Space Grotesk',sans-serif;
+scroll-behavior:smooth;
+overflow-x:hidden
+}
+body.light{background:#f5f5f7;color:#111}
+
+/* =====================
+   GLOBAL
+===================== */
+section{padding:160px 70px;position:relative;z-index:2}
+h2{
+font-family:'Archivo',sans-serif;
+font-size:4rem;
+font-weight:900;
+margin-bottom:20px
+}
+p{line-height:1.8;font-size:1.1rem}
+
+/* =====================
+   NAVBAR
+===================== */
+nav{
+position:fixed;top:0;width:100%;
+padding:30px 70px;
+display:flex;justify-content:space-between;
+align-items:center;
+background:rgba(0,0,0,.85);
+backdrop-filter:blur(20px);
+z-index:999
+}
+.logo{
+font-family:'Syncopate';
+letter-spacing:6px;
+font-weight:900;
+font-size:24px;
+background:linear-gradient(135deg,#fff,#4a8eff);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent
+}
+.nav-links a{
+color:#fff;text-decoration:none;
+margin-left:35px;
+letter-spacing:3px;
+font-size:13px;
+opacity:.7
+}
+.nav-links a:hover{opacity:1}
+
+/* =====================
+   HERO
+===================== */
+.hero{
+height:100vh;
+display:flex;
+align-items:center;
+padding:0 70px
+}
+.hero h1{
+font-size:5rem;
+font-family:'Archivo';
+font-weight:900;
+background:linear-gradient(135deg,#fff,#4a8eff);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent
+}
+.hero p{
+max-width:620px;
+margin:30px 0;
+font-size:1.25rem;
+opacity:.9
+}
+.hero-buttons{
+display:flex;gap:25px
+}
+.btn{
+padding:18px 42px;
+border:1px solid rgba(255,255,255,.3);
+text-decoration:none;
+color:#fff;
+letter-spacing:2px;
+font-size:12px;
+transition:.3s
+}
+.btn:hover{
+background:#4a8eff;
+border-color:#4a8eff
+}
+
+/* =====================
+   ABOUT
+===================== */
+#about{background:rgba(255,255,255,.03)}
+.about-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:70px;
+align-items:center
+}
+
+/* =====================
+   WHY ME
+===================== */
+.stats{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+gap:40px
+}
+.stat{
+padding:50px;
+border:1px solid rgba(255,255,255,.15);
+background:rgba(255,255,255,.04);
+text-align:center
+}
+.stat i{font-size:2.8rem;color:#4a8eff;margin-bottom:25px}
+
+/* =====================
+   PROJECTS
+===================== */
+.projects{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+gap:40px
+}
+.project{
+padding:45px;
+border:1px solid rgba(255,255,255,.15);
+background:rgba(255,255,255,.04)
+}
+.project strong{color:#4a8eff}
+
+/* =====================
+   FOOTER
+===================== */
+footer{
+padding:100px 70px;
+text-align:center;
+background:#000;
+opacity:.85
+}
+
+/* =====================
+   RESPONSIVE
+===================== */
+@media(max-width:900px){
+.hero h1{font-size:3.5rem}
+.about-grid{grid-template-columns:1fr}
+section{padding:120px 30px}
+nav{padding:20px 30px}
+.nav-links{display:none}
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+<div class="logo">SATYAM SAROJ</div>
+<div class="nav-links">
+<a href="#about">ABOUT</a>
+<a href="#work">WORK</a>
+<a href="#contact">CONTACT</a>
+</div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+<div>
+<h1 id="typing"></h1>
+<p>
+I build <strong>high-performance animated websites</strong> using 
+<strong>GSAP, Three.js & modern frontend architecture</strong> —
+focused on speed, storytelling, and pixel-perfect UI.
+</p>
+<div class="hero-buttons">
+<a class="btn" href="#">DOWNLOAD CV</a>
+<a class="btn" href="#contact">CONTACT</a>
+</div>
+</div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+<div class="about-grid">
+<div>
+<h2>About Me</h2>
+<p>
+Creative Frontend Developer with strong foundations in Java & DSA.
+I design immersive interfaces that feel fast, fluid and meaningful.
+</p>
+</div>
+<img loading="lazy" src="https://images.unsplash.com/photo-1555099962-4199c345e5dd?auto=format&fit=crop&w=900&q=80" style="width:100%;border-radius:12px">
+</div>
+</section>
+
+<!-- WHY ME -->
+<section>
+<h2>Why Hire Me</h2>
+<div class="stats">
+<div class="stat">
+<i class="fas fa-bolt"></i>
+<p><strong>Performance-First</strong><br>Optimized animations & clean code</p>
+</div>
+<div class="stat">
+<i class="fas fa-eye"></i>
+<p><strong>Design-Driven</strong><br>Editorial UI & UX mindset</p>
+</div>
+<div class="stat">
+<i class="fas fa-code"></i>
+<p><strong>Engineer Mindset</strong><br>Java + DSA foundation</p>
+</div>
+</div>
+</section>
+
+<!-- PROJECTS -->
+<section id="work">
+<h2>Projects</h2>
+<div class="projects">
+<div class="project">
+<h3>Netflix UI Clone</h3>
+<p>
+High-fidelity Netflix interface with GSAP animations.
+<br><br>
+<strong>Tech:</strong> HTML, CSS, JavaScript, GSAP  
+<br>
+<strong>Outcome:</strong> 98% Lighthouse score
+</p>
+</div>
+<div class="project">
+<h3>Creative Portfolio</h3>
+<p>
+Award-style portfolio with Three.js background & smooth scroll.
+<br><br>
+<strong>Tech:</strong> Three.js, GSAP  
+<br>
+<strong>Outcome:</strong> Premium visual experience
+</p>
+</div>
+</div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+<h2>Get In Touch</h2>
+<p>Open for internships, freelance work & frontend roles.</p>
+<br>
+<a class="btn" href="mailto:hello@satyamsaroj.com">hello@satyamsaroj.com</a>
+</section>
+
+<footer>
+<p>Crafted with GSAP, Three.js & ❤️</p>
+</footer>
+
+<script>
+/* =====================
+   TYPING EFFECT
+===================== */
+const words=["WEB DEVELOPER","FRONTEND DEVELOPER","JAVA DEVELOPER","UI/UX DEVELOPER"];
+let i=0,j=0,del=false;
+const el=document.getElementById("typing");
+
+function type(){
+if(!del && j<=words[i].length){
+el.textContent=words[i].slice(0,j++);
+}
+else if(del && j>=0){
+el.textContent=words[i].slice(0,j--);
+}
+if(j===words[i].length){del=true;setTimeout(()=>{},800)}
+if(j===0 && del){del=false;i=(i+1)%words.length}
+setTimeout(type,del?60:90)
+}
+type();
+
+/* =====================
+   GSAP PERFORMANCE
+===================== */
+gsap.ticker.lagSmoothing(1000,33);
+</script>
+
+</body>
+</html>

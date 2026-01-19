@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netflix clone</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+
+    <!-- font change -->
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        .NetflixParent {
+            width: 100%;
+            height: 100vh;
+
+            /* Background image + dark overlay */
+            background:
+
+                url('https://wallpapercave.com/wp/wp15747910.jpg');
+
+            background-size: cover;
+            background-position: center;
+
+            color: white;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+
+        }
+
+        /* NETFLIX LOGO */
+        h1 {
+            margin: 0;
+            font-size: 3em;
+            color: red;
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 4px;
+        }
+
+
+        .items {
+            display: flex;
+            gap: 25px;
+            /* spacing between HOME / SERIES / MOVIES */
+        }
+
+
+        .items h4 {
+            margin: 0;
+            cursor: pointer;
+
+        }
+
+        .items h4:hover {
+            text-decoration: underline;
+        }
+
+        .TRENDING {
+
+            margin-top: 0;
+            width: 100%;
+            height: 100%;
+
+            background-color: rgb(0, 0, 0);
+            background-size: cover;
+            background-position: center;
+
+            color: white;
+
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+
+        .TRENDINGNOW {
+            width: 100%;
+            height: 100%;
+            background-color: red;
+
+        }
+
+        .SERIESHEADING {
+            width: 100%;
+            height: 80px;
+            background-color: rgb(0, 0, 0);
+            text-align: center;
+
+
+        }
+
+        .SKYBLUEIV {
+            width: 100%;
+            height: 100%;
+            background-color: rgb(0, 0, 0);
+            display: flex;
+            justify-content: space-around;
+
+        }
+
+        .card {
+            background-color: rgb(0, 0, 0);
+            color: white;
+            text-align: center;
+            background: #000;
+
+        }
+
+        .btn-primary {
+            background-color: #e50914;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: darkred;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="NetflixParent">
+        <h1>NETFLIX</h1>
+        <div class="items">
+            <a href="#" class="nav-link">HOME</a>
+            <a href="#" class="nav-link">SERIES</a>
+            <a href="#" class="nav-link">MOVIES</a>
+            <a href="#" class="nav-link">NEW & POPULAR</a>
+            <a href="#" class="nav-link">MY LIST</a>
+        </div>
+
+    </div>
+    <div class="TRENDING">
+        <div class="TRENDINGNOW">
+            <div class="SERIESHEADING">TRENDING SERIES</div>
+            <div class="SKYBLUEIV bg-dark" >
+
+
+                <div class="card" style="width: 22rem;">
+                    <img src="https://wallpapercave.com/wp/wp6581266.jpg" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title" align="center">MONEY HEIST</h5>
+
+                        <a href="https://youtu.be/_InqQJRqGW4?si=-NqawkwaYsxQlJm0" class="btn btn-primary"
+                            align="center">WATCH</a>
+                    </div>
+                </div>
+                <div class="card" style="width: 22rem;">
+                    <img src="https://wallpapercave.com/uwp/uwp3867921.jpeg" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">THE WITCHER</h5>
+
+                        <a href="https://youtu.be/_InqQJRqGW4?si=-NqawkwaYsxQlJm0" class="btn btn-primary"
+                            align="center">WATCH</a>
+                    </div>
+                </div>
+                <div class="card" style="width: 22rem;">
+                    <img src="https://wallpapercave.com/dwp2x/wp9761345.jpg" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">DARK</h5>
+
+                        <a href="https://youtu.be/_InqQJRqGW4?si=-NqawkwaYsxQlJm0" class="btn btn-primary">WATCH</a>
+                    </div>
+                </div>
+
+
+              
+
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
