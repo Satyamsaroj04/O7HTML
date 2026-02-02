@@ -1,0 +1,55 @@
+:root {
+    --bg-color: #000f30;
+    --txt: #ffffff;
+    --blue: #3478f6;
+    --muted: #8a94a6;
+}
+
+[data-bs-theme="light"] {
+    --bg-color: #f8f9fa;
+    --txt: #212529;
+    --muted: #6c757d;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--txt);
+    width: 1200px; /* Fixed Layout */
+    margin: 0 auto;
+    transition: 0.3s;
+}
+
+.color11 { background-color: var(--bg-color); }
+.height { height: 90px; }
+.height1 { height: 650px; }
+.height3 { height: 250px; }
+.heightt { height: 750px; }
+
+.text1 { font-size: 50px; font-weight: bold; }
+.text12 { font-size: 80px; font-weight: bold; }
+.text2 { font-size: 18px; color: var(--muted); font-weight: bold; }
+.text4 { color: #3cff90; font-weight: bold; text-transform: uppercase; }
+.greycolor { color: var(--muted); }
+.nav-link-custom { text-decoration: none; color: var(--txt) !important; font-weight: bold; font-size: 14px; }
+
+.image-expert {
+    width: 60px; height: 60px; border-radius: 50%;
+    border: 3px solid var(--bg-color); margin-left: -20px;
+}
+.image-expert:first-child { margin-left: 0; }
+
+.bar-bg { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; }
+.bar-fill { height: 100%; background: var(--blue); border-radius: 10px; }
+
+.service-box { padding: 40px; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; }
+.portfolio-card { height: 350px; border-radius: 20px; background-size: cover; background-position: center; transition: 0.3s; }
+.portfolio-card:hover { transform: translateY(-10px); }
+.stagger { margin-top: 60px; }
+
+.form-card { background: rgba(255,255,255,0.03); padding: 40px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); }
+.my-input { width: 100%; padding: 12px; background: transparent; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: var(--txt); outline: none; }
+
+.newsletter-box { display: flex; background: rgba(255,255,255,0.1); border-radius: 8px; padding: 5px; }
+.newsletter-box input { background: transparent; border: none; color: white; flex: 1; outline: none; padding: 5px 10px; }
+.pad-footer { padding: 60px 40px; }
+.sunicon { font-size: 24px; cursor: pointer; color: var(--txt); }

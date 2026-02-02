@@ -1,3 +1,8 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
 .container-fluid {
     height: 100%;
     background-color: rgb(12, 43, 78);
@@ -73,7 +78,16 @@
     font-size: 50px;
     color: white;
 }
-
+text4 {
+    /* font-weight: bold; */
+    font-size: 4px;
+    color: white;
+}
+.text8 {
+    /* font-weight: bold; */
+    font-size: 8px;
+    color: white;
+}
 .text12 {
     font-weight: bold;
     font-size: 80px;
@@ -126,3 +140,585 @@
     padding-left: 5%;
 
 }
+.thirdsection{
+    width: 500px;
+}
+.heights{
+height: 600px;
+}
+.heightss{
+height: 100px;
+padding: 0 !important;
+}
+.heightsss{
+height: 500px;
+padding: 0 !important;
+}
+.hei{
+    height: 50px;
+    padding: 0 !important;
+}
+
+.height300{
+   height: 300px;
+    padding: 0 !important;
+}
+.height150{
+   height: 150px;
+    padding: 0 !important;
+}
+.height100{
+   height: 100px;
+    padding: 0 !important;
+}
+.portfolio-section {
+    background: linear-gradient(180deg, #06132d, #040d1f);
+}
+
+.portfolio-card {
+    background: transparent;
+    border-radius: 18px;
+    overflow: hidden;
+    transition: all 0.4s ease;
+}
+
+.portfolio-card img {
+    width: 100%;
+    height: 320px;
+    object-fit: cover;
+    border-radius: 18px;
+}
+
+.portfolio-card h4 {
+    margin-top: 15px;
+    font-size: 22px;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.portfolio-card p {
+    font-size: 16px;
+    color: #8a94a6;
+}
+
+/* Hover effect */
+.portfolio-card:hover {
+    transform: translateY(-10px);
+}
+/* Desktop staggered effect */
+.stagger-1 {
+    margin-top: 0px;
+}
+
+.stagger-2 {
+    margin-top: 80px;
+}
+
+.stagger-3 {
+    margin-top: 20px;
+}
+
+.stagger-4 {
+    margin-top: 100px;
+}
+
+/* Mobile – normal stack */
+@media (max-width: 768px) {
+    .stagger-1,
+    .stagger-2,
+    .stagger-3,
+    .stagger-4 {
+        margin-top: 0;
+    }
+}
+.container-fluid {
+    height: 100%;
+    background-color: rgb(12, 43, 78);
+}
+
+.btn {
+
+    background-color: rgb(12, 43, 78);
+}
+
+.color {
+
+    background-color: rgb(12, 43, 78);
+}
+
+.height {
+    height: 100px;
+}
+
+.height11 {
+    height: 70px;
+}
+
+.height12 {
+    height: 80px;
+}
+
+.height1 {
+    height: 600px;
+}
+
+.heig {
+    height: 500px;
+}
+
+.heightt {
+    height: 800px;
+}
+
+.height2 {
+    height: 200px;
+}
+
+
+.sunicon {
+    font-size: 30px;
+}
+
+.doticon {
+    font-size: 60px;
+    color: green;
+    padding-top: 4%;
+    background-color: aqua;
+}
+
+.font1 {
+    font-size: 80%;
+}
+
+
+.padding {
+    padding-top: 13%;
+}
+
+
+.dot {
+    width: 50%;
+    height: 10px;
+    background-color: green;
+    border-radius: 50%;
+}
+
+.dotdiv {
+    padding-top: 13%;
+    padding-left: 15%;
+}
+
+.text1 {
+    font-weight: bold;
+    font-size: 50px;
+    color: white;
+}
+
+.text12 {
+    font-weight: bold;
+    font-size: 80px;
+    color: white;
+}
+
+
+.text2 {
+    font-size: 20px;
+    color: grey;
+    font-weight: bold;
+}
+
+
+.text3 {
+    font-size: 60px;
+    font-weight: bold;
+
+}
+
+.text4 {
+    padding-top: 12%;
+    font-size: 16px;
+    color: grey;
+}
+
+.greycolor {
+    color: grey;
+}
+
+.height3 {
+    height: 300px;
+}
+
+.staricon {
+    font-size: 50px;
+    color: rgb(2, 2, 116);
+}
+
+.image {
+    width: 30%;
+    height: 30%;
+}
+
+.pad {
+    padding-top: 10%;
+    padding-left: 3%;
+
+}
+
+.padding1 {
+    padding-left: 5%;
+
+}
+
+.dotheight {
+    height: 30px;
+}
+
+.carddivheight {
+    height: 500px;
+}
+
+.carddivheight1 {
+    height: 400px;
+}
+
+.carddivheight2 {
+    height: 130px;
+}
+
+.text123 {
+    font-weight: bold;
+    font-size: 38px;
+    color: white;
+}
+
+
+.text21 {
+    font-size: 18px;
+    color: grey;
+    font-weight: bold;
+}
+
+.font12 {
+    font-size: 30px;
+}
+
+.cardfildheight {
+    height: 700px;
+}
+
+.height21 {
+    height: 170px;
+}
+
+.image1 {
+    width: 100%;
+    height: 100%;
+    background-image: url(https://themewagon.github.io/venus-nextjs/images/portfolio/panda-logo.png);
+    background-size: cover;
+}
+
+.image2 {
+    width: 100%;
+    height: 100%;
+    background-image: url(https://themewagon.github.io/venus-nextjs/images/portfolio/humans.png);
+    background-size: cover;
+}
+
+.image3 {
+    width: 100%;
+    height: 100%;
+    background-image: url(https://themewagon.github.io/venus-nextjs/images/portfolio/roket-squred.png);
+    background-size: cover;
+}
+
+.image4 {
+    width: 100%;
+    height: 100%;
+    background-image: url(https://themewagon.github.io/venus-nextjs/images/portfolio/cozycasa.png);
+    background-size: cover;
+}
+
+.image5 {
+    width: 100%;
+    height: 100%;
+    background-image: url(https://themewagon.github.io/venus-nextjs/images/portfolio/mars.png);
+    background-size: cover;
+}
+
+.padding11 {
+    padding-top: 10%;
+}
+
+.height4 {
+    height: 700px;
+}
+
+.height5 {
+    height: 300px;
+}
+
+.text5 {
+    font-size: 30px;
+    color: white;
+}
+
+.text6 {
+    font-weight: bold;
+    font-size: 30px;
+    color: blue;
+}
+
+.text7 {
+    font-size: 20px;
+    color: grey;
+}
+
+.text8 {
+
+    font-weight: bold;
+    font-size: 20px;
+    color: white;
+    padding-left: 75%;
+}
+
+
+.card1 {
+    width: 100%;
+    height: 200px;
+    background-image: url(https://themewagon.github.io/venus-nextjs//images/blog/blog_1.png);
+    background-size: cover;
+}
+
+.card2 {
+    width: 100%;
+    height: 200px;
+    background-image: url(https://themewagon.github.io/venus-nextjs//images/blog/blog_2.jpg);
+    background-size: cover;
+}
+
+.card3 {
+    width: 100%;
+    height: 200px;
+    background-image: url(https://themewagon.github.io/venus-nextjs//images/blog/blog_3.png);
+    background-size: cover;
+}
+
+.deco {
+    border-radius: 5px;
+}
+
+.height9 {
+    width: 25%;
+    height: 30px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.text9 {
+
+    font-weight: bold;
+    font-size: 20px;
+    color: white;
+}
+
+.text1234 {
+    font-weight: bold;
+    font-size: 32px;
+    color: white;
+}
+
+.pick {
+    font-size: 25px;
+    color: grey;
+    font-weight: bold;
+}
+
+.pick4 {
+    font-size: 25px;
+    color: white;
+    font-weight: bold;
+}
+
+.pick2 {
+    font-size: 20px;
+    color: white;
+
+}
+
+.pick5 {
+    font-size: 20px;
+    color: grey;
+
+}
+
+.pickheight {
+    height: 50px;
+}
+
+.pickheight1 {
+    height: 30px;
+}
+
+.text12345 {
+    font-weight: bold;
+    font-size: 40px;
+    color: white;
+}
+
+.form-control {
+    width: 50%;
+}
+
+.fontheight {
+    width: 50%;
+}
+
+.padding2 {
+    padding-left: 13px;
+}
+
+.pick3 {
+    font-size: 25px;
+    color: white;
+    font-weight: bold;
+}
+
+.facebook {
+    font-size: 35px;
+}
+
+.height10 {
+    height: 300px;
+}
+
+.font123 {
+    font-size: 20px;
+}
+
+.color1 {
+    background-color: rgb(5, 22, 58);
+}
+
+.color2 {
+    background-color: rgb(8, 23, 56);
+}
+.contact-section {
+    padding: 100px 0;
+    background: linear-gradient(180deg, #06132d, #040d1f);
+    color: #fff;
+}
+
+/* LEFT */
+.badge-line {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #9fffcf;
+    font-weight: 500;
+    margin-bottom: 20px;
+}
+
+.badge-line .dot {
+    width: 10px;
+    height: 10px;
+    background: #3cff90;
+    border-radius: 50%;
+}
+
+.contact-left h1 {
+    font-size: 42px;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 40px;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 40px;
+}
+
+.label {
+    color: #8a94a6;
+    font-size: 15px;
+}
+
+.value {
+    font-size: 18px;
+    font-weight: 500;
+}
+
+hr {
+    border-color: rgba(57, 7, 7, 0.15);
+    margin: 40px 0;
+}
+
+.trusted-logos {
+    display: flex;
+    gap: 30px;
+    opacity: 0.6;
+    font-weight: 600;
+}
+
+/* FORM */
+.contact-form {
+    background: rgba(255,255,255,0.04);
+    border-radius: 20px;
+    padding: 40px;
+    backdrop-filter: blur(10px);
+}
+
+.contact-form h2 {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 30px;
+}
+
+.contact-form input,
+.contact-form textarea {
+    width: 100%;
+    padding: 14px 16px;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px;
+    color: #fff;
+    outline: none;
+}
+
+.contact-form input::placeholder,
+.contact-form textarea::placeholder {
+    color: #7f8ea3;
+}
+
+.checkbox-line {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 20px 0;
+    font-size: 14px;
+    color: #aab4c3;
+}
+
+.checkbox-line a {
+    color: #4c8cff;
+    text-decoration: none;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 14px;
+    background: #3478f6;
+    border: none;
+    border-radius: 12px;
+    color: #fff;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+
+.color11{
+    background-color: rgb(0 15 48);
+}
+

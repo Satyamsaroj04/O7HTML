@@ -1,0 +1,313 @@
+.container-fluid {
+    height: 100%;
+    background-color: rgb(12, 43, 78);
+}
+
+.btn {
+
+    background-color: rgb(12, 43, 78);
+}
+
+.color {
+
+    background-color: rgb(12, 43, 78);
+}
+
+.height {
+    height: 100px;
+}
+
+.height11 {
+    height: 70px;
+}
+
+.height12 {
+    height: 80px;
+}
+
+.height1 {
+    height: 600px;
+}
+
+.heightt {
+    height: 800px;
+}
+
+.height2 {
+    height: 200px;
+}
+
+
+.sunicon {
+    font-size: 30px;
+}
+
+.doticon {
+    font-size: 60px;
+    color: green;
+    padding-top: 4%;
+    background-color: aqua;
+}
+
+.font1 {
+    font-size: 80%;
+}
+
+
+.padding {
+    padding-top: 13%;
+}
+
+
+.dot {
+    width: 50%;
+    height: 10px;
+    background-color: green;
+    border-radius: 50%;
+}
+
+.dotdiv {
+    padding-top: 13%;
+    padding-left: 15%;
+}
+
+.text1 {
+    font-weight: bold;
+    font-size: 50px;
+    color: white;
+}
+
+.text12 {
+    font-weight: bold;
+    font-size: 80px;
+    color: white;
+}
+
+
+.text2 {
+    font-size: 20px;
+    color: grey;
+    font-weight: bold;
+}
+
+
+.text3 {
+    font-size: 60px;
+    font-weight: bold;
+
+}
+
+.text4 {
+    padding-top: 12%;
+    font-size: 16px;
+    color: grey;
+}
+
+.greycolor {
+    color: grey;
+}
+
+.height3 {
+    height: 300px;
+}
+
+.staricon {
+    font-size: 50px;
+    color: rgb(2, 2, 116);
+}
+
+.image {
+    width: 30%;
+    height: 30%;
+}
+
+.pad {
+    padding-top: 10%;
+    padding-left: 3%;
+
+}
+
+.padding1 {
+    padding-left: 5%;
+
+}
+
+.dotheight {
+    height: 30px;
+}
+
+.carddivheight {
+    height: 500px;
+}
+
+.carddivheight1 {
+    height: 400px;
+}
+
+.carddivheight2 {
+    height: 130px;
+}
+
+.text123 {
+    font-weight: bold;
+    font-size: 38px;
+    color: white;
+}
+
+
+.text21 {
+    font-size: 18px;
+    color: grey;
+    font-weight: bold;
+}
+
+.font12 {
+    font-size: 30px;
+}
+
+.cardfildheight {
+    height: 700px;
+}
+
+.height21 {
+    height: 170px;
+}
+
+.image1 {
+    width: 100%;
+    height: 100%;
+    background-image: url(https://themewagon.github.io/venus-nextjs/images/portfolio/panda-logo.png);
+    background-size: cover;
+}
+
+.image2 {
+    width: 100%;
+    height: 100%;
+    background-image: url(https://themewagon.github.io/venus-nextjs/images/portfolio/humans.png);
+    background-size: cover;
+}
+
+.image3 {
+    width: 100%;
+    height: 100%;
+    background-image: url(https://themewagon.github.io/venus-nextjs/images/portfolio/roket-squred.png);
+    background-size: cover;
+}
+
+.image4 {
+    width: 100%;
+    height: 100%;
+    background-image: url(https://themewagon.github.io/venus-nextjs/images/portfolio/cozycasa.png);
+    background-size: cover;
+}
+
+.image5 {
+    width: 100%;
+    height: 100%;
+    background-image: url(https://themewagon.github.io/venus-nextjs/images/portfolio/mars.png);
+    background-size: cover;
+}
+
+.padding11 {
+    padding-top: 10%;
+}
+
+.height4 {
+    height: 700px;
+}
+
+.height5 {
+    height: 300px;
+}
+
+.text5 {
+    font-size: 30px;
+    color: white;
+}
+
+.text6 {
+    font-weight: bold;
+    font-size: 30px;
+    color: blue;
+}
+
+.text7 {
+    font-size: 20px;
+    color: grey;
+}
+
+.text8 {
+
+    font-weight: bold;
+    font-size: 20px;
+    color: white;
+    padding-left: 75%;
+}
+
+
+.card1 {
+    width: 100%;
+    height: 200px;
+    background-image: url(https://themewagon.github.io/venus-nextjs//images/blog/blog_1.png);
+    background-size: cover;
+}
+
+.card2 {
+    width: 100%;
+    height: 200px;
+    background-image: url(https://themewagon.github.io/venus-nextjs//images/blog/blog_2.jpg);
+    background-size: cover;
+}
+
+.card3 {
+    width: 100%;
+    height: 200px;
+    background-image: url(https://themewagon.github.io/venus-nextjs//images/blog/blog_3.png);
+    background-size: cover;
+}
+
+.deco {
+    border-radius: 5px;
+}
+
+.height9 {
+    width: 25%;
+    height: 30px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.text9 {
+
+    font-weight: bold;
+    font-size: 20px;
+    color: white;
+}
+
+.text1234 {
+    font-weight: bold;
+    font-size: 32px;
+    color: white;
+}
+
+.pick {
+    font-size: 25px;
+    color: grey;
+    font-weight: bold;
+}
+
+.pick2 {
+    font-size: 20px;
+    color: white;
+
+}
+
+.pickheight {
+    height: 50px;
+}
+
+.pickheight1 {
+    height: 30px;
+}

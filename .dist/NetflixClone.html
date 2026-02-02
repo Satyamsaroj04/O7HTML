@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netflix - Watch TV Shows Online, Watch Movies Online</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        :root {
+            --netflix-black: #141414;
+            --netflix-red: #E50914;
+            --netflix-dark: #0a0a0a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--netflix-black);
+            color: white;
+            font-family: 'Roboto', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* --- NAVBAR --- */
+        .navbar {
+            padding: 20px 4%;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.7) 10%, transparent);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.4s ease;
+        }
+
+        .navbar.scrolled {
+            background-color: rgba(20, 20, 20, 0.95);
+            padding: 15px 4%;
+            backdrop-filter: blur(10px);
+        }
+
+        .navbar-brand {
+            color: var(--netflix-red) !important;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.5rem;
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+
+        .nav-link {
+            color: #e5e5e5 !important;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-left: 20px;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: #b3b3b3 !important;
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--netflix-red);
+        }
+
+        .nav-icons {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .nav-icons i {
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: color 0.3s;
+        }
+
+        .nav-icons i:hover {
+            color: #b3b3b3;
+        }
+
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.1);
+        }
+
+        /* --- HERO BANNER --- */
+        .hero {
+            position: relative;
+            height: 90vh;
+            background: url('https://wallpapercave.com/wp/wp15747910.jpg') center/cover no-repeat;
+            display: flex;
+            align-items: center;
+            padding: 0 4%;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(77deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0) 85%),
+                        linear-gradient(to top, var(--netflix-black) 0%, transparent 60%);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 550px;
+            animation: fadeInUp 1s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background-color: rgba(229, 9, 20, 0.9);
+            padding: 5px 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            border-radius: 3px;
+            margin-bottom: 15px;
+        }
+
+        .hero-title {
+            font-size: 5rem;
+            font-family: 'Bebas Neue', sans-serif;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+            letter-spacing: 2px;
+        }
+
+        .hero-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .match-score {
+            color: #46d369;
+            font-weight: 700;
+        }
+
+        .hero-description {
+            font-size: 1.15rem;
+            font-weight: 400;
+            line-height: 1.6;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+            margin-bottom: 25px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn-play, .btn-info {
+            padding: 12px 30px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+
+        .btn-play {
+            background-color: white;
+            color: black;
+        }
+
+        .btn-play:hover {
+            background-color: rgba(255,255,255,0.8);
+            transform: scale(1.05);
+        }
+
+        .btn-info {
+            background-color: rgba(109, 109, 110, 0.7);
+            color: white;
+        }
+
+        .btn-info:hover {
+            background-color: rgba(109, 109, 110, 0.5);
+            transform: scale(1.05);
+        }
+
+        /* --- MOVIE ROWS --- */
+        .content-wrapper {
+            position: relative;
+            z-index: 5;
+            padding: 0 4%;
+            margin-top: -150px;
+        }
+
+        .movie-row {
+            margin-bottom: 50px;
+        }
+
+        .row-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .row-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .explore-all {
+            color: #54b9c5;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: color 0.3s;
+            text-decoration: none;
+        }
+
+        .explore-all:hover {
+            color: #46a3ae;
+        }
+
+        .movie-scroll {
+            display: flex;
+            overflow-x: auto;
+            overflow-y: hidden;
+            gap: 8px;
+            padding: 10px 0 20px 0;
+            scroll-behavior: smooth;
+        }
+
+        .movie-scroll::-webkit-scrollbar {
+            height: 5px;
+        }
+
+        .movie-scroll::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+
+        .movie-scroll::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+        }
+
+        .movie-scroll::-webkit-scrollbar-thumb:hover {
+            background: rgba(255,255,255,0.5);
+        }
+
+        .movie-item {
+            min-width: 280px;
+            height: 160px;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .movie-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 4px;
+            transition: all 0.4s;
+        }
+
+        .movie-item:hover {
+            transform: scale(1.5) translateY(-10px);
+            z-index: 100;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+        }
+
+        .movie-item:hover img {
+            filter: brightness(0.6);
+        }
+
+        .movie-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            padding: 15px;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .movie-item:hover .movie-overlay {
+            opacity: 1;
+        }
+
+        .movie-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .movie-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .movie-action-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: rgba(42, 42, 42, 0.8);
+            border: 2px solid rgba(255,255,255,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .movie-action-btn:hover {
+            background-color: white;
+            border-color: white;
+            transform: scale(1.1);
+        }
+
+        .movie-action-btn:hover i {
+            color: black;
+        }
+
+        .movie-action-btn i {
+            font-size: 0.75rem;
+            color: white;
+        }
+
+        .progress-bar-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: rgba(255,255,255,0.3);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--netflix-red);
+        }
+
+        /* --- MODAL --- */
+        .modal-backdrop.show {
+            opacity: 0.8;
+        }
+
+        .modal-content {
+            background-color: #181818;
+            border: none;
+            border-radius: 8px;
+        }
+
+        .modal-header {
+            border: none;
+            padding: 0;
+            position: relative;
+        }
+
+        .modal-video {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(to bottom, transparent 50%, #181818 100%),
+                        url('https://wallpapercave.com/wp/wp15747910.jpg') center/cover;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: rgba(0,0,0,0.7);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 10;
+            transition: background-color 0.3s;
+        }
+
+        .modal-close:hover {
+            background-color: rgba(0,0,0,0.9);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .modal-title-large {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .modal-info {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .modal-meta {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            color: #46d369;
+            font-weight: 700;
+            flex-wrap: wrap;
+        }
+
+        .modal-description {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            color: #d1d1d1;
+        }
+
+        .modal-details {
+            font-size: 0.9rem;
+            color: #777;
+        }
+
+        .modal-details span {
+            color: white;
+            margin-left: 5px;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            padding: 70px 4% 30px;
+            color: #808080;
+            background-color: var(--netflix-black);
+            margin-top: 100px;
+        }
+
+        .footer-social {
+            margin-bottom: 30px;
+        }
+
+        .footer-social i {
+            font-size: 1.5rem;
+            margin-right: 20px;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .footer-social i:hover {
+            color: white;
+        }
+
+        .footer-links {
+            margin: 30px 0;
+        }
+
+        .footer-link {
+            font-size: 0.85rem;
+            color: #808080;
+            text-decoration: none;
+            transition: color 0.3s;
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        .footer-link:hover {
+            color: #b3b3b3;
+        }
+
+        .service-code-btn {
+            background: transparent;
+            border: 1px solid #808080;
+            color: #808080;
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            margin: 20px 0;
+            transition: all 0.3s;
+        }
+
+        .service-code-btn:hover {
+            border-color: white;
+            color: white;
+        }
+
+        .footer-copyright {
+            font-size: 0.75rem;
+            margin-top: 20px;
+            color: #808080;
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 991px) {
+            .navbar-brand {
+                font-size: 2rem;
+            }
+
+            .nav-link {
+                margin-left: 0;
+                margin-bottom: 10px;
+            }
+
+            .nav-icons {
+                margin-top: 15px;
+                gap: 20px;
+            }
+
+            .hero-title {
+                font-size: 3.5rem;
+            }
+
+            .hero-description {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                height: 70vh;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-description {
+                font-size: 0.95rem;
+            }
+
+            .btn-play, .btn-info {
+                padding: 10px 20px;
+                font-size: 1rem;
+            }
+
+            .movie-item {
+                min-width: 200px;
+                height: 115px;
+            }
+
+            .movie-item:hover {
+                transform: scale(1.2) translateY(-5px);
+            }
+
+            .row-title {
+                font-size: 1.2rem;
+            }
+
+            .content-wrapper {
+                margin-top: -100px;
+            }
+
+            .modal-video {
+                height: 250px;
+            }
+
+            .modal-title-large {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .navbar {
+                padding: 15px 3%;
+            }
+
+            .navbar.scrolled {
+                padding: 10px 3%;
+            }
+
+            .navbar-brand {
+                font-size: 1.5rem;
+            }
+
+            .hero {
+                height: 60vh;
+                padding: 0 3%;
+            }
+
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .hero-description {
+                font-size: 0.85rem;
+                margin-bottom: 15px;
+            }
+
+            .hero-meta {
+                font-size: 0.8rem;
+                gap: 8px;
+            }
+
+            .btn-play, .btn-info {
+                padding: 8px 16px;
+                font-size: 0.9rem;
+            }
+
+            .content-wrapper {
+                padding: 0 3%;
+                margin-top: -80px;
+            }
+
+            .movie-item {
+                min-width: 150px;
+                height: 90px;
+            }
+
+            .movie-item:hover {
+                transform: scale(1.1);
+            }
+
+            .movie-overlay {
+                display: none;
+            }
+
+            .row-title {
+                font-size: 1rem;
+            }
+
+            .explore-all {
+                font-size: 0.8rem;
+            }
+
+            footer {
+                padding: 50px 3% 20px;
+            }
+
+            .modal-body {
+                padding: 20px;
+            }
+        }
+
+        /* Navbar toggler custom style */
+        .navbar-toggler {
+            border-color: rgba(255,255,255,0.3);
+        }
+
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.8%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">NETFLIX</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">TV Shows</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Movies</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">New & Popular</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">My List</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Browse by Languages</a></li>
+                </ul>
+                <div class="nav-icons">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <i class="fa-solid fa-gift"></i>
+                    <i class="fa-solid fa-bell"></i>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/0/0b/Netflix-avatar.png" class="user-avatar" alt="User">
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO BANNER -->
+    <section class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <span class="hero-badge">NETFLIX SERIES</span>
+            <h1 class="hero-title">Money Heist</h1>
+            <div class="hero-meta">
+                <span class="match-score">98% Match</span>
+                <span>2017</span>
+                <span>5 Seasons</span>
+                <span class="border border-secondary px-1" style="font-size: 0.7rem;">HD</span>
+            </div>
+            <p class="hero-description">Eight thieves take hostages and lock themselves in the Royal Mint of Spain as a criminal mastermind manipulates the police to carry out his plan.</p>
+            <div class="hero-buttons">
+                <button class="btn-play" onclick="showModal()">
+                    <i class="fa-solid fa-play"></i> Play
+                </button>
+                <button class="btn-info" onclick="showModal()">
+                    <i class="fa-solid fa-circle-info"></i> More Info
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTENT ROWS -->
+    <div class="content-wrapper">
+        <!-- Trending Now -->
+        <div class="movie-row">
+            <div class="row-header">
+                <h2 class="row-title">Trending Now</h2>
+                <a href="#" class="explore-all">Explore All <i class="fa-solid fa-chevron-right"></i></a>
+            </div>
+            <div class="movie-scroll">
+                <div class="movie-item" onclick="showModal()">
+                    <img src="https://wallpapercave.com/wp/wp6581266.jpg" alt="Stranger Things">
+                    <div class="movie-overlay">
+                        <div class="movie-title">Stranger Things</div>
+                        <div class="movie-actions">
+                            <div class="movie-action-btn"><i class="fa-solid fa-play"></i></div>
+                            <div class="movie-action-btn"><i class="fa-solid fa-plus"></i></div>
+                            <div class="movie-action-btn"><i class="fa-solid fa-thumbs-up"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="movie-item" onclick="showModal()">
+                    <img src="https://wallpapercave.com/uwp/uwp3867921.jpeg" alt="The Witcher">
+                    <div class="movie-overlay">
+                        <div class="movie-title">The Witcher</div>
+                        <div class="movie-actions">
+                            <div class="movie-action-btn"><i class="fa-solid fa-play"></i></div>
+                            <div class="movie-action-btn"><i class="fa-solid fa-plus"></i></div>
+                            <div class="movie-action-btn"><i class="fa-solid fa-thumbs-up"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="movie-item" onclick="showModal()">
+                    <img src="https://wallpapercave.com/dwp2x/wp9761345.jpg" alt="Wednesday">
+                    <div class="movie-overlay">
+                        <div class="movie-title">Wednesday</div>
+                        <div class="movie-actions">
+                            <div class="movie-action-btn"><i class="fa-solid fa-play"></i></div>
+                            <div class="movie-action-btn"><i class="fa-solid fa-plus"></i></div>
+                            <div class="movie-action-btn"><i class="fa-solid fa-thumbs-up"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="movie-item" onclick="showModal()">
+                    <img src="https://wallpapercave.com/wp/wp1917154.jpg" alt="Breaking Bad">
+                    <div class="movie-overlay">
+                        <div class="movie-title">Breaking Bad</div>
+                        <div class="movie-actions">
+                            <div class="movie-action-btn"><i class="fa-solid fa-play"></i></div>
+                            <div class="movie-action-btn"><i class="fa-solid fa-plus"></i></div>
+                            <div class="movie-action-btn"><i class="fa-solid fa-thumbs-up"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="movie-item" onclick="showModal()">
+                    <img src="https://wallpapercave.com/wp/wp5920301.jpg" alt="Peaky Blinders">
+                    <div class="movie-overlay">
+                        <div class="movie-title">Peaky Blinders</div>
+                        <div class="movie-actions">
+                            <div class="movie-action-btn"><i class="fa-solid fa-play"></i></div>
+                            <div class="movie-action-btn"><i class="fa-solid fa-plus"></i></div>
+                            <div class="movie-action-btn"><i class="fa-solid fa-thumbs-up"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="movie-item" onclick="showModal()">
+                    <img src="https://wallpapercave.com/wp/wp11246142.jpg" alt="Dark">
+                    <div class="movie-overlay">
+                        <div class="movie-title">Dark</div>
+                        <div class="movie-actions">
+                            <div class="movie-action-btn"><i class="fa-solid fa-play"></i></div>
+                            <div class="movie-action-btn"><i class="fa-solid fa-plus"></i></div>
+                            <div class="movie-action-btn"><i class="fa-solid fa-thumbs-up"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Picks -->
+        <div class="movie-row">
+            <div class="row-header">
+                <h2 class="row-title">Top Picks for You</h2>
+                <a href="#" class="explore-all">Explore All <i class="fa-solid fa-chevron-right"></i></a>
+            </div>
+            <div class="movie-scroll">
+                <div class="movie-item" onclick="showModal()">
+                    <img src="https://wallpapercave.com/wp/wp4056410.jpg" alt="Narcos">
+                    <div class="movie-overlay">
+                        <div class="movie-title">Narcos</div>
+                        <div class="movie-actions">
+                            <div class="movie-action-btn"><i class="fa-solid fa-play"></i></div>
+                            <div class="movie-action-btn"><i class="fa-solid fa-plus"></i></div>
+                            <div class="movie-action-btn"><i class="fa-solid fa-thumbs-up"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="movie-item" onclick="showModal()">
+                    <img src="https://wallpapercave.com/wp/wp1839527.jpg" alt="Vikings">
+                    <div class="movie-overlay">
+                        <div class="movie-title">Vikings</div>
+                        <div class="movie-actions">
+                            <div class="movie-action-btn"><i class="fa-solid fa-play"></i></div>
+                            <div class="movie-action-btn"><i class="fa-solid fa-plus"></i></div>
+                            <div class="movie-action-btn"><i class="fa-solid fa-thumbs-up"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="movie-item" onclick="showModal()">
+                    <img src="https://wallpapercave.com/wp/wp7411624.jpg" alt="The Crown">
+                    <div class="movie-overlay">
+                        <div class="movie-title">The Crown</div>
+                        <div class="movie-actions">
+                            <div class="movie-action-btn"><i class="fa-solid fa-play"></i></div>
+                            <div class="movie-action-btn"><i class="fa-solid fa-plus"></i></div>
+                            <div class="movie-action-btn"><i class="fa-solid fa-thumbs-up"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="movie-item" onclick="showModal()">
+                    <img src="https://wallpapercave.com/wp/wp10506346.jpg" alt="Ozark">
+                    <div class="movie-overlay">
+                        <div class="movie-title">Ozark</div>
+                        <div class="movie-actions">
+                            <div class="movie-action-btn"><i class="fa-solid fa-play"></i></div>
+                            <div class="movie-action-btn"><i class="fa-solid fa-plus"></i></div>
+                            <div class="movie-action-btn"><i class="fa-solid fa-thumbs-up"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="movie-item" onclick="showModal()">
+                    <img src="https://wallpapercave.com/wp/wp12075673.jpg" alt="Lucifer">
+                    <div class="movie-overlay">
+                        <div class="movie-title">Lucifer</div>
+                        <div class="movie-actions">
+                            <div class="movie-action-btn"><i class="fa-solid fa-play"></i></div>
+                            <div class="movie-action-btn"><i class="fa-solid fa-plus"></i></div>
+                            <div class="movie-action-btn"><i class="fa-solid fa-thumbs-up"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="movie-item" onclick="showModal()">
+                    <img src="https://wallpapercave.com/wp/wp11033100.jpg" alt="Squid Game">
+                    <div class="movie-overlay">
+                        <div class="movie-title">Squid Game</div>
+                        <div class="movie-actions">
+                            <div class="movie-action-btn"><i class="fa-solid fa-play"></i></div>
+                            <div class="movie-action-btn"><i class="fa-solid fa-plus"></i></div>
+                            <div class="movie-action-btn"><i class="fa-solid fa-thumbs-up"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Continue Watching -->
+        <div class="movie-row">
+            <div class="row-header">
+                <h2 class="row-title">Continue Watching</h2>
+                <a href="#" class="explore-all">Explore All <i class="fa-solid fa-chevron-right"></i></a>
+            </div>
+            <div class="movie-scroll">
+                <div class="movie-item" onclick="showModal()">
+                    <img src="https://wallpapercave.com/wp/wp6581266.jpg" alt="Continue 1">
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" style="width: 45%;"></div>
+                    </div>
+                </div>
+                <div class="movie-item" onclick="showModal()">
+                    <img src="https://wallpapercave.com/wp/wp4056410.jpg" alt="Continue 2">
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" style="width: 72%;"></div>
+                    </div>
+                </div>
+                <div class="movie-item" onclick="showModal()">
+                    <img src="https://wallpapercave.com/wp/wp1917154.jpg" alt="Continue 3">
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" style="width: 28%;"></div>
+                    </div>
+                </div>
+                <div class="movie-item" onclick="showModal()">
+                    <img src="https://wallpapercave.com/dwp2x/wp9761345.jpg" alt="Continue 4">
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" style="width: 91%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Netflix Originals -->
+        <div class="movie-row">
+            <div class="row-header">
+                <h2 class="row-title">Netflix Originals</h2>
+                <a href="#" class="explore-all">Explore All <i class="fa-solid fa-chevron-right"></i></a>
+            </div>
+            <div class="movie-scroll">
+                <div class="movie-item" onclick="showModal()">
+                    <img src="https://wallpapercave.com/wp/wp11246142.jpg" alt="Dark">
+                </div>
+                <div class="movie-item" onclick="showModal()">
+                    <img src="https://wallpapercave.com/wp/wp5920301.jpg" alt="Peaky Blinders">
+                </div>
+                <div class="movie-item" onclick="showModal()">
+                    <img src="https://wallpapercave.com/wp/wp11033100.jpg" alt="Squid Game">
+                </div>
+                <div class="movie-item" onclick="showModal()">
+                    <img src="https://wallpapercave.com/uwp/uwp3867921.jpeg" alt="The Witcher">
+                </div>
+                <div class="movie-item" onclick="showModal()">
+                    <img src="https://wallpapercave.com/wp/wp7411624.jpg" alt="The Crown">
+                </div>
+                <div class="movie-item" onclick="showModal()">
+                    <img src="https://wallpapercave.com/wp/wp10506346.jpg" alt="Ozark">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="footer-social">
+                        <i class="fa-brands fa-facebook"></i>
+                        <i class="fa-brands fa-instagram"></i>
+                        <i class="fa-brands fa-twitter"></i>
+                        <i class="fa-brands fa-youtube"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row footer-links">
+                <div class="col-6 col-md-3">
+                    <a href="#" class="footer-link">Audio Description</a>
+                    <a href="#" class="footer-link">Investor Relations</a>
+                    <a href="#" class="footer-link">Legal Notices</a>
+                </div>
+                <div class="col-6 col-md-3">
+                    <a href="#" class="footer-link">Help Center</a>
+                    <a href="#" class="footer-link">Jobs</a>
+                    <a href="#" class="footer-link">Cookie Preferences</a>
+                </div>
+                <div class="col-6 col-md-3">
+                    <a href="#" class="footer-link">Gift Cards</a>
+                    <a href="#" class="footer-link">Terms of Use</a>
+                    <a href="#" class="footer-link">Corporate Information</a>
+                </div>
+                <div class="col-6 col-md-3">
+                    <a href="#" class="footer-link">Media Center</a>
+                    <a href="#" class="footer-link">Privacy</a>
+                    <a href="#" class="footer-link">Contact Us</a>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="service-code">
+                        <button class="service-code-btn">Service Code</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <p class="footer-copyright">© 1997-2026 Netflix, Inc.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODAL -->
+    <div class="modal fade" id="movieModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-video">
+                        <button class="modal-close" onclick="closeModal()">×</button>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <h2 class="modal-title-large">Money Heist</h2>
+                    <div class="modal-info">
+                        <button class="btn-play" style="margin: 0;">
+                            <i class="fa-solid fa-play"></i> Play
+                        </button>
+                        <div class="movie-action-btn" style="width: 40px; height: 40px;">
+                            <i class="fa-solid fa-plus"></i>
+                        </div>
+                        <div class="movie-action-btn" style="width: 40px; height: 40px;">
+                            <i class="fa-solid fa-thumbs-up"></i>
+                        </div>
+                    </div>
+                    <div class="modal-meta" style="margin-bottom: 15px;">
+                        <span>98% Match</span>
+                        <span style="color: white;">2017</span>
+                        <span style="color: white;">5 Seasons</span>
+                        <span class="border border-secondary px-1" style="font-size: 0.7rem; color: white;">16+</span>
+                        <span class="border border-secondary px-1" style="font-size: 0.7rem; color: white;">HD</span>
+                    </div>
+                    <p class="modal-description">
+                        Eight thieves take hostages and lock themselves in the Royal Mint of Spain as a criminal mastermind manipulates the police to carry out his plan. A criminal mastermind who goes by "The Professor" has a plan to pull off the biggest heist in recorded history.
+                    </p>
+                    <div class="modal-details">
+                        <p><strong>Cast:</strong><span> Álvaro Morte, Úrsula Corberó, Itziar Ituño, Pedro Alonso</span></p>
+                        <p><strong>Genres:</strong><span> Spanish, Crime TV Shows, TV Dramas, TV Thrillers</span></p>
+                        <p><strong>This show is:</strong><span> Exciting, Suspenseful</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Navbar scroll effect
+        const nav = document.querySelector('.navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+
+        // Modal functions
+        function showModal() {
+            const modal = new bootstrap.Modal(document.getElementById('movieModal'));
+            modal.show();
+        }
+
+        function closeModal() {
+            const modal = bootstrap.Modal.getInstance(document.getElementById('movieModal'));
+            modal.hide();
+        }
+
+        // Active nav link
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
