@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Form</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        .divdesign {
+            width: 100%;
+            height: 700px;
+        }
+
+        .image {
+            background-image: url(login.jpg);
+            background-size: cover;
+            background-position: center;
+        }
+
+        .form-box {
+            height: auto;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.25);
+            padding: 30px;
+            border-radius: 25px;
+        }
+
+        label {
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12 divdesign image d-flex justify-content-center align-items-center">
+
+            <!-- FORM BOX -->
+            <div class="col-10 col-md-6 form-box">
+
+                <h3 class="text-center mb-4">INFO FORM</h3>
+
+                <form>
+
+               <!-- Name -->
+                    <div class="mb-3">
+                        <label>Name</label>
+                        <input type="text" class="form-control" placeholder="Enter your name">
+                    </div>
+
+            <!-- Age -->
+                    <div class="mb-3">
+                        <label>Age</label>
+                        <input type="number" class="form-control" placeholder="Enter your age">
+                    </div>
+
+            <!-- Gmail -->
+                    <div class="mb-3">
+                        <label>Gmail</label>
+                        <input type="email" class="form-control" placeholder="Enter your email">
+                    </div>
+
+        <!-- Course -->
+                    <div class="mb-3">
+                        <label>Course</label>
+                        <input type="text" class="form-control" placeholder="Enter course name">
+                    </div>
+         <!-- Year -->
+                    <div class="mb-3">
+                        <label>Year</label>
+                        <select class="form-select">
+                            <option selected disabled>Select year</option>
+                            <option>1st Year</option>
+                            <option>2nd Year</option>
+                            <option>3rd Year</option>
+                            <option>4th Year</option>
+                        </select>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="text-center">
+                        <button class="btn btn-primary px-5">Submit</button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

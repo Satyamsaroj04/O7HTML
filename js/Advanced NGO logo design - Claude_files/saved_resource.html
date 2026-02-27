@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<!-- saved from url=(0012)about:srcdoc -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.13/html-to-image.min.js" integrity="sha512-iZ2ORl595Wx6miw+GuadDet4WQbdSWS3JLMoNfY8cRGoEFy6oT3G9IbcrBeL6AfkgpA51ETt/faX6yLV+/gFJg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+      (function() {
+        const originalConsole = window.console;
+        window.console = {
+          log: (...args) => {
+            originalConsole.log(...args);
+            window.parent.postMessage({ type: 'console', message: args.join(' ') }, '*');
+          },
+          error: (...args) => {
+            originalConsole.error(...args);
+            window.parent.postMessage({ type: 'console', message: 'Error: ' + args.join(' ') }, '*');
+          },
+          warn: (...args) => {
+            originalConsole.warn(...args);
+            window.parent.postMessage({ type: 'console', message: 'Warning: ' + args.join(' ') }, '*');
+          }
+        };
+
+        let requestId = 0;
+        let callbacksMap = new Map();
+        let streamControllers = new Map();
+        
+        window.claude = {
+          complete: (prompt) => {
+            return new Promise((resolve, reject) => {
+              const id = requestId++;
+              callbacksMap.set(id, { resolve, reject });
+              window.parent.postMessage({ type: 'claudeComplete', id, prompt }, '*');
+            });
+          }
+        };
+
+        window.storage = {
+          get: (key, shared = false) => {
+            return new Promise((resolve, reject) => {
+              const id = requestId++;
+              callbacksMap.set(id, { resolve, reject });
+              window.parent.postMessage({ type: 'storageGet', id, key, shared }, '*');
+            });
+          },
+          set: (key, value, shared = false) => {
+            return new Promise((resolve, reject) => {
+              const id = requestId++;
+              callbacksMap.set(id, { resolve, reject });
+              window.parent.postMessage({ type: 'storageSet', id, key, value, shared }, '*');
+            });
+          },
+          delete: (key, shared = false) => {
+            return new Promise((resolve, reject) => {
+              const id = requestId++;
+              callbacksMap.set(id, { resolve, reject });
+              window.parent.postMessage({ type: 'storageDelete', id, key, shared }, '*');
+            });
+          },
+          list: (prefix, shared = false) => {
+            return new Promise((resolve, reject) => {
+              const id = requestId++;
+              callbacksMap.set(id, { resolve, reject });
+              window.parent.postMessage({ type: 'storageList', id, prefix, shared }, '*');
+            });
+          }
+        };
+
+        let pendingBlobs = new Map();
+        URL.createObjectURL = (blob) => {
+          // Store the blob and create an ID and URL for it
+          const blobId = `blob-${Date.now()}-${Math.random()}`;
+          pendingBlobs.set(blobId, blob);
+          return `blob-request://${blobId}`;
+        };
+
+        URL.revokeObjectURL = (url) => {
+          // Remove the blob from our store
+          const blobId = url.replace("blob-request://", "");
+          pendingBlobs.delete(blobId);
+        };
+
+        const getBlobFromURL = (url) => {
+          const blobId = url.replace("blob-request://", "");
+          return pendingBlobs.get(blobId);
+        };
+
+        // Override global fetch with streaming support
+        window.fetch = (url, init = {}) => {
+          return new Promise((resolve, reject) => {
+            const id = requestId++;
+            const channelId = `fetch-${id}-${Date.now()}`;
+            
+            callbacksMap.set(id, { 
+              resolve: (response) => {
+                // Create a ReadableStream for the response body
+                const stream = new ReadableStream({
+                  start(controller) {
+                    streamControllers.set(channelId, controller);
+                  },
+                  cancel() {
+                    streamControllers.delete(channelId);
+                  }
+                });
+                
+                // Create and return the Response with the stream
+                resolve(new Response(stream, {
+                  status: response.status,
+                  statusText: response.statusText,
+                  headers: response.headers
+                }));
+              },
+              reject,
+              channelId
+            });
+            
+            window.parent.postMessage({
+              type: 'proxyFetch',
+              id,
+              url,
+              init,
+              channelId
+            }, '*');
+          });
+        };
+
+        window.addEventListener('message', async (event) => {
+          if (event.data.type === 'takeScreenshot') {
+            const rootElement = document.getElementById('artifacts-component-root-html');
+            if (!rootElement) {
+              window.parent.postMessage({
+                type: 'screenshotError',
+                error: new Error('Root element not found'),
+              }, '*');
+            }
+            const screenshot = await htmlToImage.toPng(rootElement, {
+              imagePlaceholder:
+                "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAA1JREFUGFdjePDgwX8ACOQDoNsk0PMAAAAASUVORK5CYII=",
+            });
+            window.parent.postMessage({
+              type: 'screenshotData',
+              data: screenshot,
+            }, '*');
+          } else if (event.data.type === 'claudeComplete') {
+            const callback = callbacksMap.get(event.data.id);
+            if (event.data.error) {
+              callback.reject(new Error(event.data.error));
+            } else {
+              callback.resolve(event.data.completion);
+            }
+            callbacksMap.delete(event.data.id);
+          } else if (event.data.type === 'proxyFetchResponse') {
+            const callback = callbacksMap.get(event.data.id);
+            if (event.data.error) {
+              callback.reject(new Error(event.data.error));
+              callbacksMap.delete(event.data.id);
+            } else {
+              // Initial response with headers, status, etc.
+              callback.resolve({
+                status: event.data.status,
+                statusText: event.data.statusText,
+                headers: event.data.headers
+              });
+              // Don't delete the callback yet if streaming
+              if (!event.data.body) {
+                callbacksMap.delete(event.data.id);
+              }
+            }
+          } else if (event.data.type === 'proxyFetchStream') {
+            // Handle streaming data chunks
+            const controller = streamControllers.get(event.data.channelId);
+            if (controller) {
+              if (event.data.error) {
+                controller.error(new Error(event.data.error));
+                streamControllers.delete(event.data.channelId);
+              } else if (event.data.done) {
+                controller.close();
+                streamControllers.delete(event.data.channelId);
+                // Clean up the callback
+                const callback = Array.from(callbacksMap.entries()).find(
+                  ([_, value]) => value.channelId === event.data.channelId
+                );
+                if (callback) {
+                  callbacksMap.delete(callback[0]);
+                }
+              } else if (event.data.chunk) {
+                controller.enqueue(new Uint8Array(event.data.chunk));
+              }
+            }
+          } else if (event.data.type === 'storageGet') {
+            const callback = callbacksMap.get(event.data.id);
+            if (event.data.error) {
+              callback.reject(new Error(event.data.error));
+            } else {
+              callback.resolve(event.data.result);
+            }
+            callbacksMap.delete(event.data.id);
+          } else if (event.data.type === 'storageSet') {
+            const callback = callbacksMap.get(event.data.id);
+            if (event.data.error) {
+              callback.reject(new Error(event.data.error));
+            } else {
+              callback.resolve(event.data.result);
+            }
+            callbacksMap.delete(event.data.id);
+          } else if (event.data.type === 'storageDelete') {
+            const callback = callbacksMap.get(event.data.id);
+            if (event.data.error) {
+              callback.reject(new Error(event.data.error));
+            } else {
+              callback.resolve(event.data.result);
+            }
+            callbacksMap.delete(event.data.id);
+          } else if (event.data.type === 'storageList') {
+            const callback = callbacksMap.get(event.data.id);
+            if (event.data.error) {
+              callback.reject(new Error(event.data.error));
+            } else {
+              callback.resolve(event.data.result);
+            }
+            callbacksMap.delete(event.data.id);
+          }
+        });
+
+        window.addEventListener('click', (event) => {
+          const isEl = event.target instanceof HTMLElement;
+          if (!isEl) return;
+    
+          // find ancestor links
+          const linkEl = event.target.closest("a");
+          if (!linkEl || !linkEl.href) return;
+    
+          event.preventDefault();
+          event.stopImmediatePropagation();
+    
+          if (linkEl.href.startsWith("blob-request:")) {
+            const blob = getBlobFromURL(linkEl.href);
+            if (!blob) return;
+            void blob.arrayBuffer().then((data) => {
+              window.parent.postMessage({
+                type: "downloadFile",
+                filename: linkEl.download,
+                data,
+                mimeType: blob.type || "application/octet-stream",
+              });
+            });
+          } else if (linkEl.href.startsWith("data:")) {
+            const [header, base64Data] = linkEl.href.split(",");
+            const mimeMatch = header.match(/data:([^;]+)/);
+            const mimeType = mimeMatch ? mimeMatch[1] : "application/octet-stream";
+            const binaryString = atob(base64Data);
+            const data = Uint8Array.from(binaryString, (c) =>
+              c.charCodeAt(0),
+            ).buffer;
+            window.parent.postMessage({
+              type: "downloadFile",
+              filename: linkEl.download,
+              data,
+              mimeType,
+            });
+          } else {
+            let linkUrl;
+            try {
+              linkUrl = new URL(linkEl.href);
+            } catch (error) {
+              return;
+            }
+    
+            if (linkUrl.hostname === window.location.hostname) return;
+      
+            window.parent.postMessage({
+              type: 'openExternal',
+              href: linkEl.href,
+            }, '*');
+          }
+      });
+
+        const originalOpen = window.open;
+        window.open = function (url) {
+          window.parent.postMessage({
+            type: "openExternal",
+            href: url,
+          }, "*");
+        };
+
+        window.addEventListener('error', (event) => {
+          window.parent.postMessage({ type: 'console', message: 'Uncaught Error: ' + event.message }, '*');
+        });
+      })();
+    </script>
+  
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZeroHunger NGO Logo</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Lato:ital,wght@0,300;0,400;1,300&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0f1a0f;
+    font-family: 'Lato', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 60px;
+    padding: 60px 20px;
+  }
+
+  .label {
+    color: #4CAF50;
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 16px;
+    opacity: 0.7;
+  }
+
+  .logo-card {
+    border-radius: 20px;
+    padding: 50px 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .logo-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.08);
+    pointer-events: none;
+  }
+
+  .card-dark {
+    background: #0d1a0d;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05);
+  }
+  .card-light {
+    background: #f9f5ef;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+  }
+  .card-white {
+    background: #ffffff;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+  }
+
+  svg {
+    max-width: 100%;
+    animation: fadeIn 1s ease forwards;
+    opacity: 0;
+    animation-delay: 0.2s;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    color: #e8f5e9;
+    font-size: 14px;
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    text-align: center;
+    font-weight: 400;
+    margin-bottom: 4px;
+    opacity: 0.5;
+  }
+
+  .top-label {
+    font-size: 12px;
+    letter-spacing: 5px;
+    color: #81C784;
+    text-align: center;
+    margin-bottom: 40px;
+    text-transform: uppercase;
+    opacity: 0.8;
+  }
+</style>
+</head>
+<body id="artifacts-component-root-html">
+
+<h1>Logo Showcase</h1>
+<p class="top-label">ZeroHunger NGO · Brand Identity</p>
+
+<!-- Dark Background -->
+<div>
+  <p class="label">On Dark</p>
+  <div class="logo-card card-dark">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 200" width="500" height="200">
+      <defs>
+        <lineargradient id="sunGradD" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#FFD700"></stop>
+          <stop offset="100%" style="stop-color:#FF8C00"></stop>
+        </lineargradient>
+        <lineargradient id="bgGradD" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#1B5E20"></stop>
+          <stop offset="100%" style="stop-color:#33691E"></stop>
+        </lineargradient>
+        <lineargradient id="textG1D" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style="stop-color:#66BB6A"></stop>
+          <stop offset="100%" style="stop-color:#81C784"></stop>
+        </lineargradient>
+        <lineargradient id="textG2D" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style="stop-color:#FFA726"></stop>
+          <stop offset="100%" style="stop-color:#FFB74D"></stop>
+        </lineargradient>
+        <radialgradient id="glowD" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" style="stop-color:#FFD700;stop-opacity:0.3"></stop>
+          <stop offset="100%" style="stop-color:#FFD700;stop-opacity:0"></stop>
+        </radialgradient>
+        <filter id="shadowD">
+          <fedropshadow dx="2" dy="4" stdDeviation="4" flood-color="#00000044"></fedropshadow>
+        </filter>
+        <filter id="glowFD">
+          <fegaussianblur stdDeviation="3" result="coloredBlur"></fegaussianblur>
+          <femerge><femergenode in="coloredBlur"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge>
+        </filter>
+        <clippath id="ccD"><circle cx="100" cy="95" r="82"></circle></clippath>
+      </defs>
+      <circle cx="100" cy="95" r="88" fill="none" stroke="url(#bgGradD)" stroke-width="4" opacity="0.4"></circle>
+      <circle cx="100" cy="95" r="82" fill="url(#bgGradD)" filter="url(#shadowD)"></circle>
+      <circle cx="100" cy="95" r="82" fill="url(#glowD)"></circle>
+      <g clip-path="url(#ccD)">
+        <rect x="18" y="13" width="164" height="110" fill="#81C784" opacity="0.15"></rect>
+        <ellipse cx="100" cy="130" rx="90" ry="45" fill="#388E3C" opacity="0.8"></ellipse>
+        <ellipse cx="60" cy="135" rx="60" ry="35" fill="#2E7D32" opacity="0.7"></ellipse>
+        <ellipse cx="145" cy="140" rx="55" ry="30" fill="#1B5E20" opacity="0.7"></ellipse>
+        <path d="M30 125 Q100 110 170 125" stroke="#4CAF50" stroke-width="2" fill="none" opacity="0.5"></path>
+        <path d="M25 135 Q100 120 175 135" stroke="#4CAF50" stroke-width="2" fill="none" opacity="0.4"></path>
+      </g>
+      <g filter="url(#glowFD)">
+        <circle cx="100" cy="72" r="22" fill="url(#sunGradD)"></circle>
+        <g stroke="#FFD700" stroke-width="2.5" stroke-linecap="round" opacity="0.9">
+          <line x1="100" y1="42" x2="100" y2="35"></line>
+          <line x1="100" y1="102" x2="100" y2="109"></line>
+          <line x1="70" y1="72" x2="63" y2="72"></line>
+          <line x1="130" y1="72" x2="137" y2="72"></line>
+          <line x1="79" y1="51" x2="74" y2="46"></line>
+          <line x1="121" y1="93" x2="126" y2="98"></line>
+          <line x1="121" y1="51" x2="126" y2="46"></line>
+          <line x1="79" y1="93" x2="74" y2="98"></line>
+        </g>
+      </g>
+      <g transform="translate(28,42) rotate(-30)">
+        <path d="M0,0 C-8,15 -5,32 8,38 C8,38 18,15 0,0Z" fill="#66BB6A"></path>
+        <path d="M0,0 C4,19 8,30 8,38" stroke="#2E7D32" stroke-width="1.5" fill="none"></path>
+      </g>
+      <g transform="translate(50,32) rotate(-10)">
+        <path d="M0,0 C-5,10 -3,22 5,26 C5,26 12,10 0,0Z" fill="#81C784"></path>
+        <path d="M0,0 C2,12 5,20 5,26" stroke="#388E3C" stroke-width="1" fill="none"></path>
+      </g>
+      <g transform="translate(152,25) rotate(15)" opacity="0.9">
+        <line x1="0" y1="55" x2="0" y2="0" stroke="#FF8F00" stroke-width="2"></line>
+        <ellipse cx="-5" cy="8" rx="4" ry="7" fill="#FFA000" transform="rotate(-20,-5,8)"></ellipse>
+        <ellipse cx="5" cy="14" rx="4" ry="7" fill="#FFB300" transform="rotate(20,5,14)"></ellipse>
+        <ellipse cx="-5" cy="22" rx="4" ry="7" fill="#FFA000" transform="rotate(-20,-5,22)"></ellipse>
+        <ellipse cx="5" cy="28" rx="4" ry="7" fill="#FFB300" transform="rotate(20,5,28)"></ellipse>
+        <ellipse cx="-5" cy="36" rx="4" ry="7" fill="#FFA000" transform="rotate(-20,-5,36)"></ellipse>
+        <ellipse cx="0" cy="4" rx="4" ry="7" fill="#FFB300"></ellipse>
+      </g>
+      <g filter="url(#shadowD)">
+        <g transform="translate(82,60)">
+          <rect x="-3" y="20" width="6" height="38" rx="3" fill="white" opacity="0.95"></rect>
+          <rect x="-8" y="3" width="3" height="22" rx="1.5" fill="white" opacity="0.95"></rect>
+          <rect x="-3" y="3" width="3" height="22" rx="1.5" fill="white" opacity="0.95"></rect>
+          <rect x="2" y="3" width="3" height="22" rx="1.5" fill="white" opacity="0.95"></rect>
+          <rect x="7" y="3" width="3" height="22" rx="1.5" fill="white" opacity="0.95"></rect>
+        </g>
+        <g transform="translate(118,60)">
+          <rect x="-3" y="22" width="6" height="36" rx="3" fill="white" opacity="0.95"></rect>
+          <ellipse cx="0" cy="12" rx="9" ry="13" fill="white" opacity="0.95"></ellipse>
+        </g>
+      </g>
+      <circle cx="100" cy="95" r="84" fill="none" stroke="#FFD700" stroke-width="1.5" opacity="0.5" stroke-dasharray="6 4"></circle>
+      <text x="210" y="82" font-family="Georgia,serif" font-size="52" font-weight="700" fill="url(#textG1D)" letter-spacing="2">ZERO</text>
+      <text x="210" y="138" font-family="Georgia,serif" font-size="52" font-weight="700" fill="url(#textG2D)" letter-spacing="2">HUNGER</text>
+      <text x="212" y="160" font-family="Georgia,serif" font-size="13" fill="#aaa" letter-spacing="3" font-style="italic">NOURISHING EVERY SOUL</text>
+      <line x1="212" y1="167" x2="490" y2="167" stroke="#4CAF50" stroke-width="1.5" opacity="0.5"></line>
+      <line x1="212" y1="170" x2="490" y2="170" stroke="#FF8F00" stroke-width="1" opacity="0.4"></line>
+    </svg>
+  </div>
+</div>
+
+<!-- Light Background -->
+<div>
+  <p class="label" style="color:#888">On Light</p>
+  <div class="logo-card card-light">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 200" width="500" height="200">
+      <defs>
+        <lineargradient id="sunGradL" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#FFD700"></stop>
+          <stop offset="100%" style="stop-color:#FF8C00"></stop>
+        </lineargradient>
+        <lineargradient id="bgGradL" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#1B5E20"></stop>
+          <stop offset="100%" style="stop-color:#33691E"></stop>
+        </lineargradient>
+        <lineargradient id="textG1L" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style="stop-color:#2E7D32"></stop>
+          <stop offset="100%" style="stop-color:#388E3C"></stop>
+        </lineargradient>
+        <lineargradient id="textG2L" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style="stop-color:#E65100"></stop>
+          <stop offset="100%" style="stop-color:#FF6F00"></stop>
+        </lineargradient>
+        <radialgradient id="glowL" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" style="stop-color:#FFD700;stop-opacity:0.3"></stop>
+          <stop offset="100%" style="stop-color:#FFD700;stop-opacity:0"></stop>
+        </radialgradient>
+        <filter id="shadowL">
+          <fedropshadow dx="2" dy="4" stdDeviation="4" flood-color="#00000033"></fedropshadow>
+        </filter>
+        <filter id="glowFL">
+          <fegaussianblur stdDeviation="3" result="coloredBlur"></fegaussianblur>
+          <femerge><femergenode in="coloredBlur"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge>
+        </filter>
+        <clippath id="ccL"><circle cx="100" cy="95" r="82"></circle></clippath>
+      </defs>
+      <circle cx="100" cy="95" r="88" fill="none" stroke="url(#bgGradL)" stroke-width="4" opacity="0.3"></circle>
+      <circle cx="100" cy="95" r="82" fill="url(#bgGradL)" filter="url(#shadowL)"></circle>
+      <circle cx="100" cy="95" r="82" fill="url(#glowL)"></circle>
+      <g clip-path="url(#ccL)">
+        <rect x="18" y="13" width="164" height="110" fill="#81C784" opacity="0.2"></rect>
+        <ellipse cx="100" cy="130" rx="90" ry="45" fill="#388E3C" opacity="0.8"></ellipse>
+        <ellipse cx="60" cy="135" rx="60" ry="35" fill="#2E7D32" opacity="0.7"></ellipse>
+        <ellipse cx="145" cy="140" rx="55" ry="30" fill="#1B5E20" opacity="0.7"></ellipse>
+        <path d="M30 125 Q100 110 170 125" stroke="#4CAF50" stroke-width="2" fill="none" opacity="0.5"></path>
+        <path d="M25 135 Q100 120 175 135" stroke="#4CAF50" stroke-width="2" fill="none" opacity="0.4"></path>
+      </g>
+      <g filter="url(#glowFL)">
+        <circle cx="100" cy="72" r="22" fill="url(#sunGradL)"></circle>
+        <g stroke="#FFD700" stroke-width="2.5" stroke-linecap="round" opacity="0.9">
+          <line x1="100" y1="42" x2="100" y2="35"></line>
+          <line x1="100" y1="102" x2="100" y2="109"></line>
+          <line x1="70" y1="72" x2="63" y2="72"></line>
+          <line x1="130" y1="72" x2="137" y2="72"></line>
+          <line x1="79" y1="51" x2="74" y2="46"></line>
+          <line x1="121" y1="93" x2="126" y2="98"></line>
+          <line x1="121" y1="51" x2="126" y2="46"></line>
+          <line x1="79" y1="93" x2="74" y2="98"></line>
+        </g>
+      </g>
+      <g transform="translate(28,42) rotate(-30)">
+        <path d="M0,0 C-8,15 -5,32 8,38 C8,38 18,15 0,0Z" fill="#66BB6A"></path>
+        <path d="M0,0 C4,19 8,30 8,38" stroke="#2E7D32" stroke-width="1.5" fill="none"></path>
+      </g>
+      <g transform="translate(50,32) rotate(-10)">
+        <path d="M0,0 C-5,10 -3,22 5,26 C5,26 12,10 0,0Z" fill="#81C784"></path>
+        <path d="M0,0 C2,12 5,20 5,26" stroke="#388E3C" stroke-width="1" fill="none"></path>
+      </g>
+      <g transform="translate(152,25) rotate(15)" opacity="0.9">
+        <line x1="0" y1="55" x2="0" y2="0" stroke="#FF8F00" stroke-width="2"></line>
+        <ellipse cx="-5" cy="8" rx="4" ry="7" fill="#FFA000" transform="rotate(-20,-5,8)"></ellipse>
+        <ellipse cx="5" cy="14" rx="4" ry="7" fill="#FFB300" transform="rotate(20,5,14)"></ellipse>
+        <ellipse cx="-5" cy="22" rx="4" ry="7" fill="#FFA000" transform="rotate(-20,-5,22)"></ellipse>
+        <ellipse cx="5" cy="28" rx="4" ry="7" fill="#FFB300" transform="rotate(20,5,28)"></ellipse>
+        <ellipse cx="-5" cy="36" rx="4" ry="7" fill="#FFA000" transform="rotate(-20,-5,36)"></ellipse>
+        <ellipse cx="0" cy="4" rx="4" ry="7" fill="#FFB300"></ellipse>
+      </g>
+      <g filter="url(#shadowL)">
+        <g transform="translate(82,60)">
+          <rect x="-3" y="20" width="6" height="38" rx="3" fill="white" opacity="0.95"></rect>
+          <rect x="-8" y="3" width="3" height="22" rx="1.5" fill="white" opacity="0.95"></rect>
+          <rect x="-3" y="3" width="3" height="22" rx="1.5" fill="white" opacity="0.95"></rect>
+          <rect x="2" y="3" width="3" height="22" rx="1.5" fill="white" opacity="0.95"></rect>
+          <rect x="7" y="3" width="3" height="22" rx="1.5" fill="white" opacity="0.95"></rect>
+        </g>
+        <g transform="translate(118,60)">
+          <rect x="-3" y="22" width="6" height="36" rx="3" fill="white" opacity="0.95"></rect>
+          <ellipse cx="0" cy="12" rx="9" ry="13" fill="white" opacity="0.95"></ellipse>
+        </g>
+      </g>
+      <circle cx="100" cy="95" r="84" fill="none" stroke="#FFD700" stroke-width="1.5" opacity="0.5" stroke-dasharray="6 4"></circle>
+      <text x="210" y="82" font-family="Georgia,serif" font-size="52" font-weight="700" fill="url(#textG1L)" letter-spacing="2">ZERO</text>
+      <text x="210" y="138" font-family="Georgia,serif" font-size="52" font-weight="700" fill="url(#textG2L)" letter-spacing="2">HUNGER</text>
+      <text x="212" y="160" font-family="Georgia,serif" font-size="13" fill="#777" letter-spacing="3" font-style="italic">NOURISHING EVERY SOUL</text>
+      <line x1="212" y1="167" x2="490" y2="167" stroke="#4CAF50" stroke-width="1.5" opacity="0.5"></line>
+      <line x1="212" y1="170" x2="490" y2="170" stroke="#FF8F00" stroke-width="1" opacity="0.4"></line>
+    </svg>
+  </div>
+</div>
+
+
+
+</body></html>

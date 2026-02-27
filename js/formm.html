@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Modern Login UI</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body{
+    height:100vh;
+    background:#000;
+}
+
+/* MAIN CONTAINER */
+.container{
+    display:flex;
+    height:100vh;
+}
+
+/* LEFT SIDE */
+.left{
+    flex:1;
+    background: linear-gradient(120deg,#7f2cff,#a855f7);
+    position:relative;
+}
+
+/* fake world map effect */
+.left::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:url("https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg");
+    background-size:cover;
+    background-position:center;
+    opacity:0.15;
+}
+
+/* RIGHT SIDE */
+.right{
+    width:420px;
+    background:#0f0f0f;
+    padding:40px;
+    color:white;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+}
+
+/* HEADINGS */
+h2{
+    margin-bottom:20px;
+    letter-spacing:1px;
+}
+
+/* INPUTS */
+input{
+    width:100%;
+    padding:14px 18px;
+    margin-bottom:15px;
+    border-radius:30px;
+    border:none;
+    outline:none;
+    background:#2a2a2a;
+    color:white;
+    font-size:14px;
+}
+
+/* BUTTON */
+button{
+    width:100%;
+    padding:14px;
+    border-radius:30px;
+    border:none;
+    font-weight:bold;
+    cursor:pointer;
+    background:white;
+    color:black;
+    margin-top:10px;
+}
+
+button:hover{
+    background:#e5e5e5;
+}
+
+/* REGISTER */
+.register-title{
+    text-align:center;
+    margin:30px 0 20px;
+    font-size:14px;
+    opacity:0.8;
+}
+
+.row{
+    display:flex;
+    gap:10px;
+}
+
+/* CLOSE BUTTON */
+.close{
+    position:absolute;
+    top:20px;
+    right:20px;
+    background:white;
+    color:black;
+    width:35px;
+    height:35px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+    .left{
+        display:none;
+    }
+    .right{
+        width:100%;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="left"></div>
+
+    <div class="right">
+        <div class="close">✕</div>
+
+        <h2>LOGIN</h2>
+        <input type="email" placeholder="Email">
+        <button>LOGIN →</button>
+
+        <div class="register-title">REGISTER TO NEVER MISS A BEAT</div>
+
+        <div class="row">
+            <input type="text" placeholder="First name">
+            <input type="text" placeholder="Last name">
+        </div>
+
+        <input type="text" placeholder="@Handle">
+        <input type="email" placeholder="Email">
+        <input type="text" placeholder="Phone number">
+
+        <button>REGISTER</button>
+    </div>
+
+</div>
+
+</body>
+</html>

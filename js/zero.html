@@ -1,0 +1,2309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ZeroHunger — Community Welfare Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+/* ── Reset & Root ───────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green-900:#0a2e12;
+  --green-800:#134a1e;
+  --green-700:#1b6b2f;
+  --green-600:#22873b;
+  --green-500:#2ba34a;
+  --green-400:#4caf68;
+  --green-300:#81c995;
+  --green-100:#e6f4ea;
+  --green-50:#f0fbf3;
+  --amber:#f59e0b;
+  --amber-light:#fef3c7;
+  --red:#dc2626;
+  --red-light:#fee2e2;
+  --blue:#1d4ed8;
+  --blue-light:#dbeafe;
+  --purple:#7c3aed;
+  --teal:#0d9488;
+  --orange:#ea580c;
+  --dark:#0f1117;
+  --mid:#1e2535;
+  --card:#1a2030;
+  --border:rgba(255,255,255,0.08);
+  --text:#e8edf5;
+  --muted:#8892a4;
+  --font-display:'Playfair Display',serif;
+  --font-body:'DM Sans',sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
+  --r:12px;
+  --r-lg:20px;
+  --shadow:0 4px 24px rgba(0,0,0,0.4);
+  --glow:0 0 40px rgba(43,163,74,0.2);
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font-body);
+  background:var(--dark);
+  color:var(--text);
+  overflow-x:hidden;
+  cursor:none;
+}
+img{max-width:100%;display:block}
+a{text-decoration:none;color:inherit}
+button{cursor:none;font-family:var(--font-body)}
+
+/* ── Custom Cursor ──────────────────────────────────────── */
+#cursor{
+  position:fixed;width:12px;height:12px;
+  background:var(--green-400);border-radius:50%;
+  pointer-events:none;z-index:9999;
+  transform:translate(-50%,-50%);
+  transition:transform 0.1s,width 0.2s,height 0.2s,background 0.2s;
+  mix-blend-mode:screen;
+}
+#cursor-ring{
+  position:fixed;width:36px;height:36px;
+  border:1.5px solid rgba(76,175,104,0.5);border-radius:50%;
+  pointer-events:none;z-index:9998;
+  transform:translate(-50%,-50%);
+  transition:transform 0.15s ease-out,width 0.3s,height 0.3s,border-color 0.2s;
+}
+body:has(a:hover) #cursor,body:has(button:hover) #cursor{
+  width:24px;height:24px;background:var(--amber);
+}
+body:has(a:hover) #cursor-ring,body:has(button:hover) #cursor-ring{
+  width:56px;height:56px;border-color:rgba(245,158,11,0.4);
+}
+
+/* ── Noise texture overlay ──────────────────────────────── */
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:0;opacity:0.4;
+}
+
+/* ── Utility ────────────────────────────────────────────── */
+.container{max-width:1200px;margin:0 auto;padding:0 24px}
+.flex{display:flex;align-items:center}
+.flex-col{display:flex;flex-direction:column}
+.gap-4{gap:16px}.gap-6{gap:24px}.gap-8{gap:32px}
+.grid{display:grid}
+.section{padding:96px 0}
+.section-sm{padding:64px 0}
+.tag{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 14px;border-radius:100px;
+  font-size:12px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;
+  background:rgba(43,163,74,0.12);color:var(--green-400);
+  border:1px solid rgba(43,163,74,0.25);
+}
+.heading{
+  font-family:var(--font-display);
+  line-height:1.1;letter-spacing:-0.02em;
+}
+.h1{font-size:clamp(42px,6vw,80px);font-weight:900}
+.h2{font-size:clamp(32px,4vw,52px);font-weight:700}
+.h3{font-size:clamp(20px,2.5vw,28px);font-weight:700}
+.h4{font-size:18px;font-weight:600}
+.subtext{color:var(--muted);line-height:1.7;font-size:16px}
+.highlight{color:var(--green-400)}
+.mono{font-family:var(--font-mono)}
+
+/* ── Buttons ────────────────────────────────────────────── */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:14px 28px;border-radius:var(--r);
+  font-weight:600;font-size:15px;border:none;
+  transition:all 0.25s cubic-bezier(0.34,1.56,0.64,1);
+  position:relative;overflow:hidden;white-space:nowrap;
+}
+.btn::after{
+  content:'';position:absolute;inset:0;
+  background:rgba(255,255,255,0);
+  transition:background 0.2s;
+}
+.btn:hover::after{background:rgba(255,255,255,0.08)}
+.btn:active{transform:scale(0.97)}
+.btn-primary{
+  background:var(--green-600);color:#fff;
+  box-shadow:0 4px 20px rgba(34,135,59,0.4);
+}
+.btn-primary:hover{background:var(--green-500);transform:translateY(-2px);box-shadow:0 8px 30px rgba(34,135,59,0.5)}
+.btn-outline{
+  background:transparent;color:var(--green-400);
+  border:1.5px solid rgba(76,175,104,0.4);
+}
+.btn-outline:hover{background:rgba(43,163,74,0.1);border-color:var(--green-400);transform:translateY(-2px)}
+.btn-ghost{background:rgba(255,255,255,0.06);color:var(--text);border:1px solid var(--border)}
+.btn-ghost:hover{background:rgba(255,255,255,0.1);transform:translateY(-2px)}
+.btn-sm{padding:9px 18px;font-size:13px;border-radius:8px}
+.btn-lg{padding:18px 36px;font-size:17px;border-radius:14px}
+.btn-danger{background:var(--red);color:#fff;box-shadow:0 4px 20px rgba(220,38,38,0.3)}
+.btn-amber{background:var(--amber);color:#000;box-shadow:0 4px 20px rgba(245,158,11,0.3)}
+
+/* ── Cards ──────────────────────────────────────────────── */
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--r-lg);
+  padding:28px;
+  transition:transform 0.3s,box-shadow 0.3s,border-color 0.3s;
+}
+.card:hover{transform:translateY(-4px);box-shadow:var(--shadow),var(--glow);border-color:rgba(76,175,104,0.2)}
+.card-sm{padding:20px;border-radius:var(--r)}
+
+/* ── Form elements ──────────────────────────────────────── */
+.form-group{display:flex;flex-direction:column;gap:6px}
+.label{font-size:13px;font-weight:500;color:var(--muted);letter-spacing:0.3px}
+.input{
+  width:100%;padding:12px 16px;
+  background:rgba(255,255,255,0.05);
+  border:1.5px solid var(--border);
+  border-radius:var(--r);color:var(--text);
+  font-family:var(--font-body);font-size:15px;
+  transition:border-color 0.2s,background 0.2s,box-shadow 0.2s;
+  outline:none;
+}
+.input:focus{
+  border-color:var(--green-500);
+  background:rgba(43,163,74,0.06);
+  box-shadow:0 0 0 3px rgba(43,163,74,0.12);
+}
+.input::placeholder{color:var(--muted)}
+select.input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%238892a4' viewBox='0 0 20 20'%3E%3Cpath d='M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 011.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-size:20px;padding-right:40px}
+textarea.input{resize:vertical;min-height:100px}
+.radio-group{display:flex;gap:10px;flex-wrap:wrap}
+.radio-chip{
+  padding:8px 16px;border-radius:8px;
+  border:1.5px solid var(--border);
+  font-size:13px;font-weight:500;
+  cursor:pointer;transition:all 0.2s;color:var(--muted);
+  background:rgba(255,255,255,0.03);
+}
+.radio-chip.active,.radio-chip:hover{
+  border-color:var(--green-500);color:var(--green-400);
+  background:rgba(43,163,74,0.1);
+}
+.checkbox-wrap{display:flex;align-items:center;gap:10px;cursor:pointer}
+.checkbox-wrap input{accent-color:var(--green-500);width:16px;height:16px}
+.checkbox-wrap span{font-size:14px;color:var(--muted)}
+
+/* ── Pill badge ─────────────────────────────────────────── */
+.badge{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 10px;border-radius:100px;font-size:11px;font-weight:600;
+}
+.badge-green{background:rgba(43,163,74,0.15);color:var(--green-400)}
+.badge-amber{background:rgba(245,158,11,0.15);color:var(--amber)}
+.badge-red{background:rgba(220,38,38,0.15);color:#f87171}
+.badge-blue{background:rgba(29,78,216,0.15);color:#60a5fa}
+.badge-purple{background:rgba(124,58,237,0.15);color:#a78bfa}
+.badge-teal{background:rgba(13,148,136,0.15);color:#2dd4bf}
+
+/* ── Divider ────────────────────────────────────────────── */
+.divider{height:1px;background:var(--border);margin:24px 0}
+
+/* ── Scroll animations ──────────────────────────────────── */
+.reveal{opacity:0;transform:translateY(32px);transition:opacity 0.7s ease,transform 0.7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-left{opacity:0;transform:translateX(-40px);transition:opacity 0.7s ease,transform 0.7s ease}
+.reveal-left.visible{opacity:1;transform:translateX(0)}
+.reveal-right{opacity:0;transform:translateX(40px);transition:opacity 0.7s ease,transform 0.7s ease}
+.reveal-right.visible{opacity:1;transform:translateX(0)}
+.stagger-1{transition-delay:0.1s}
+.stagger-2{transition-delay:0.2s}
+.stagger-3{transition-delay:0.3s}
+.stagger-4{transition-delay:0.4s}
+.stagger-5{transition-delay:0.5s}
+
+/* ══════════════════════════════════════════════════════════
+   NAVBAR
+══════════════════════════════════════════════════════════ */
+#navbar{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  padding:0 24px;
+  transition:background 0.3s,backdrop-filter 0.3s,box-shadow 0.3s;
+}
+#navbar.scrolled{
+  background:rgba(10,14,18,0.85);
+  backdrop-filter:blur(20px);
+  box-shadow:0 1px 0 var(--border);
+}
+.nav-inner{
+  max-width:1200px;margin:0 auto;
+  display:flex;align-items:center;justify-content:space-between;
+  height:72px;
+}
+.nav-logo{display:flex;align-items:center;gap:10px}
+.nav-logo-mark{
+  width:36px;height:36px;border-radius:10px;
+  background:linear-gradient(135deg,var(--green-600),var(--green-400));
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;
+}
+.nav-logo-text{font-family:var(--font-display);font-size:20px;font-weight:700;color:#fff}
+.nav-logo-text span{color:var(--green-400)}
+.nav-links{display:flex;align-items:center;gap:6px}
+.nav-link{
+  padding:8px 14px;border-radius:8px;font-size:14px;font-weight:500;
+  color:var(--muted);transition:all 0.2s;
+}
+.nav-link:hover,.nav-link.active{color:var(--text);background:rgba(255,255,255,0.06)}
+.nav-actions{display:flex;align-items:center;gap:10px}
+.nav-notif{
+  position:relative;width:38px;height:38px;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:10px;background:rgba(255,255,255,0.06);
+  border:1px solid var(--border);cursor:pointer;transition:all 0.2s;
+}
+.nav-notif:hover{background:rgba(255,255,255,0.1)}
+.notif-dot{
+  position:absolute;top:8px;right:8px;
+  width:7px;height:7px;border-radius:50%;
+  background:var(--amber);border:2px solid var(--dark);
+}
+#hamburger{display:none;background:none;border:none;padding:6px;cursor:pointer}
+#hamburger span{display:block;width:22px;height:2px;background:var(--text);border-radius:2px;transition:all 0.3s;margin:4px 0}
+
+/* ══════════════════════════════════════════════════════════
+   HERO
+══════════════════════════════════════════════════════════ */
+#hero{
+  min-height:100vh;
+  display:flex;align-items:center;
+  position:relative;overflow:hidden;
+  padding-top:72px;
+}
+.hero-bg{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 10% 20%, rgba(27,107,47,0.25) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 50% at 85% 80%, rgba(13,148,136,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 60% 10%, rgba(43,163,74,0.08) 0%, transparent 50%);
+}
+.hero-grid{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px);
+  background-size:60px 60px;
+  mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,#000 30%,transparent 100%);
+}
+.hero-content{
+  position:relative;z-index:2;
+  max-width:1200px;margin:0 auto;padding:80px 24px;
+  display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;
+}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:6px 14px;border-radius:100px;
+  background:rgba(43,163,74,0.1);
+  border:1px solid rgba(76,175,104,0.3);
+  font-size:12px;font-weight:600;letter-spacing:1px;
+  text-transform:uppercase;color:var(--green-400);
+  margin-bottom:20px;
+  animation:fadeDown 0.8s ease both;
+}
+.hero-eyebrow::before{content:'●';color:var(--green-400);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.hero-title{
+  font-family:var(--font-display);
+  font-size:clamp(44px,6vw,72px);
+  font-weight:900;line-height:1.05;
+  letter-spacing:-0.03em;
+  margin-bottom:20px;
+  animation:fadeUp 0.9s 0.1s ease both;
+}
+.hero-title .line-green{
+  display:block;
+  background:linear-gradient(135deg,var(--green-400),var(--green-300));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-desc{
+  color:var(--muted);font-size:17px;line-height:1.7;
+  margin-bottom:32px;max-width:480px;
+  animation:fadeUp 0.9s 0.2s ease both;
+}
+.hero-actions{
+  display:flex;gap:12px;flex-wrap:wrap;
+  animation:fadeUp 0.9s 0.3s ease both;
+}
+.hero-stats{
+  display:flex;gap:32px;margin-top:48px;
+  animation:fadeUp 0.9s 0.4s ease both;
+}
+.hero-stat-num{
+  font-family:var(--font-display);font-size:28px;font-weight:700;
+  color:var(--green-400);
+}
+.hero-stat-lbl{font-size:13px;color:var(--muted);margin-top:2px}
+
+/* Hero right: Live activity panel */
+.hero-panel{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--r-lg);
+  overflow:hidden;
+  animation:fadeUp 1s 0.3s ease both;
+  box-shadow:var(--shadow),0 0 80px rgba(43,163,74,0.08);
+}
+.hero-panel-header{
+  padding:16px 20px;
+  background:rgba(255,255,255,0.03);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.live-dot{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:12px;font-weight:600;color:var(--green-400);
+}
+.live-dot::before{
+  content:'';width:7px;height:7px;border-radius:50%;
+  background:var(--green-400);animation:livePulse 1.5s infinite;
+}
+@keyframes livePulse{
+  0%{box-shadow:0 0 0 0 rgba(76,175,104,0.6)}
+  70%{box-shadow:0 0 0 8px rgba(76,175,104,0)}
+  100%{box-shadow:0 0 0 0 rgba(76,175,104,0)}
+}
+.activity-feed{padding:8px;max-height:340px;overflow:hidden;position:relative}
+.activity-item{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:10px 12px;border-radius:10px;
+  border:1px solid transparent;
+  transition:background 0.2s,border-color 0.2s;
+  margin-bottom:4px;
+  animation:slideIn 0.5s ease both;
+}
+.activity-item:hover{background:rgba(255,255,255,0.04);border-color:var(--border)}
+@keyframes slideIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+.activity-icon{
+  width:36px;height:36px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;flex-shrink:0;
+}
+.activity-text{font-size:13px;color:var(--text);line-height:1.4}
+.activity-meta{font-size:11px;color:var(--muted);margin-top:3px}
+.activity-time{font-size:11px;color:var(--muted);white-space:nowrap;margin-left:auto}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+
+/* Floating orbs */
+.orb{
+  position:absolute;border-radius:50%;filter:blur(80px);
+  pointer-events:none;animation:float 8s ease-in-out infinite;
+}
+.orb-1{width:400px;height:400px;background:rgba(27,107,47,0.15);top:-100px;right:-100px;animation-delay:0s}
+.orb-2{width:300px;height:300px;background:rgba(13,148,136,0.08);bottom:0;left:-50px;animation-delay:3s}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-20px)}}
+
+/* ══════════════════════════════════════════════════════════
+   TICKER
+══════════════════════════════════════════════════════════ */
+.ticker-wrap{
+  overflow:hidden;padding:14px 0;
+  background:var(--green-700);
+  border-top:1px solid rgba(255,255,255,0.1);
+  border-bottom:1px solid rgba(255,255,255,0.1);
+}
+.ticker{display:flex;gap:48px;white-space:nowrap;animation:ticker 30s linear infinite}
+.ticker-item{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:500;color:rgba(255,255,255,0.9)}
+.ticker-sep{color:var(--green-300);font-size:18px}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ══════════════════════════════════════════════════════════
+   STATS SECTION
+══════════════════════════════════════════════════════════ */
+.stats-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:2px;
+  background:var(--border);border-radius:var(--r-lg);
+  overflow:hidden;border:1px solid var(--border);
+}
+.stat-cell{
+  background:var(--card);padding:40px 32px;
+  transition:background 0.3s;
+}
+.stat-cell:hover{background:rgba(43,163,74,0.06)}
+.stat-number{
+  font-family:var(--font-display);font-size:clamp(36px,4vw,52px);
+  font-weight:900;
+  background:linear-gradient(135deg,var(--green-400),var(--green-300));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  line-height:1;margin-bottom:8px;
+}
+.stat-label{color:var(--muted);font-size:14px;font-weight:500}
+.stat-change{
+  display:inline-flex;align-items:center;gap:4px;
+  margin-top:8px;font-size:12px;color:var(--green-400);font-weight:600;
+}
+
+/* ══════════════════════════════════════════════════════════
+   HOW IT WORKS
+══════════════════════════════════════════════════════════ */
+.steps-container{display:grid;grid-template-columns:repeat(4,1fr);gap:0;position:relative}
+.steps-container::before{
+  content:'';position:absolute;top:42px;left:12%;right:12%;height:1px;
+  background:linear-gradient(90deg,transparent,var(--green-700),var(--green-700),transparent);
+  z-index:0;
+}
+.step-item{display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 16px;position:relative;z-index:1}
+.step-icon{
+  width:84px;height:84px;border-radius:var(--r-lg);
+  display:flex;align-items:center;justify-content:center;font-size:32px;
+  margin-bottom:20px;position:relative;
+  border:1px solid var(--border);
+  background:var(--card);
+  transition:all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+.step-icon::after{
+  content:attr(data-step);
+  position:absolute;top:-10px;right:-10px;
+  width:24px;height:24px;border-radius:50%;
+  background:var(--green-600);color:#fff;
+  font-size:11px;font-weight:700;font-family:var(--font-body);
+  display:flex;align-items:center;justify-content:center;
+}
+.step-item:hover .step-icon{
+  background:rgba(43,163,74,0.12);
+  border-color:rgba(76,175,104,0.4);
+  transform:translateY(-8px) scale(1.05);
+  box-shadow:0 20px 40px rgba(43,163,74,0.2);
+}
+.step-title{font-size:17px;font-weight:600;margin-bottom:8px}
+.step-desc{font-size:14px;color:var(--muted);line-height:1.6}
+
+/* ══════════════════════════════════════════════════════════
+   DONATION CATEGORIES
+══════════════════════════════════════════════════════════ */
+.categories-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.cat-card{
+  padding:28px;border-radius:var(--r-lg);
+  border:1px solid var(--border);
+  background:var(--card);
+  display:flex;flex-direction:column;gap:12px;
+  transition:all 0.3s;position:relative;overflow:hidden;
+  cursor:pointer;
+}
+.cat-card::before{
+  content:'';position:absolute;inset:0;
+  background:var(--cat-color,var(--green-700));
+  opacity:0;transition:opacity 0.3s;
+}
+.cat-card:hover{transform:translateY(-6px);box-shadow:var(--shadow)}
+.cat-card:hover::before{opacity:0.06}
+.cat-card:hover .cat-icon{transform:scale(1.15) rotate(-5deg)}
+.cat-icon{
+  font-size:40px;transition:transform 0.3s;
+  width:64px;height:64px;display:flex;align-items:center;justify-content:center;
+  border-radius:16px;background:var(--cat-bg,rgba(43,163,74,0.1));
+}
+.cat-title{font-size:18px;font-weight:600}
+.cat-desc{font-size:14px;color:var(--muted);line-height:1.5}
+.cat-count{
+  margin-top:auto;font-size:12px;color:var(--muted);
+  display:flex;align-items:center;gap:6px;
+}
+.cat-bar{height:3px;border-radius:2px;background:rgba(255,255,255,0.08);margin-top:4px}
+.cat-bar-fill{height:100%;border-radius:2px;background:var(--cat-color,var(--green-500));transition:width 1s ease}
+
+/* ══════════════════════════════════════════════════════════
+   MODAL / OVERLAY
+══════════════════════════════════════════════════════════ */
+.overlay{
+  position:fixed;inset:0;z-index:2000;
+  background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);
+  display:flex;align-items:center;justify-content:center;
+  padding:24px;opacity:0;pointer-events:none;
+  transition:opacity 0.3s;
+}
+.overlay.open{opacity:1;pointer-events:all}
+.modal{
+  background:var(--mid);
+  border:1px solid var(--border);
+  border-radius:var(--r-lg);
+  width:100%;max-width:600px;
+  max-height:90vh;overflow-y:auto;
+  transform:scale(0.9) translateY(20px);
+  transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  scrollbar-width:thin;scrollbar-color:var(--green-700) transparent;
+}
+.overlay.open .modal{transform:scale(1) translateY(0)}
+.modal-header{
+  padding:24px 28px 20px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;background:var(--mid);z-index:1;
+}
+.modal-title{font-family:var(--font-display);font-size:22px;font-weight:700}
+.modal-close{
+  width:36px;height:36px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,0.06);border:1px solid var(--border);
+  font-size:18px;cursor:pointer;transition:all 0.2s;
+  color:var(--muted);
+}
+.modal-close:hover{background:rgba(220,38,38,0.1);border-color:rgba(220,38,38,0.3);color:var(--red)}
+.modal-body{padding:24px 28px}
+.modal-footer{
+  padding:20px 28px 24px;
+  border-top:1px solid var(--border);
+  display:flex;gap:10px;justify-content:flex-end;
+}
+
+/* ══════════════════════════════════════════════════════════
+   TABS
+══════════════════════════════════════════════════════════ */
+.tabs{display:flex;gap:4px;padding:4px;background:rgba(255,255,255,0.04);border-radius:10px;border:1px solid var(--border);width:fit-content}
+.tab{
+  padding:8px 20px;border-radius:7px;font-size:14px;font-weight:500;
+  color:var(--muted);cursor:pointer;transition:all 0.2s;border:none;background:none;
+}
+.tab.active{background:var(--green-700);color:#fff;box-shadow:0 2px 8px rgba(27,107,47,0.4)}
+.tab:hover:not(.active){color:var(--text);background:rgba(255,255,255,0.04)}
+.tab-content{display:none}.tab-content.active{display:block}
+
+/* ══════════════════════════════════════════════════════════
+   DASHBOARD SECTION
+══════════════════════════════════════════════════════════ */
+.dash-layout{display:grid;grid-template-columns:260px 1fr;gap:24px;align-items:start}
+.dash-sidebar{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r-lg);padding:16px;
+  position:sticky;top:90px;
+}
+.dash-user{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 8px 16px;border-bottom:1px solid var(--border);margin-bottom:8px;
+}
+.dash-avatar{
+  width:42px;height:42px;border-radius:12px;
+  background:linear-gradient(135deg,var(--green-600),var(--green-400));
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;font-weight:700;color:#fff;flex-shrink:0;
+}
+.dash-user-name{font-size:15px;font-weight:600}
+.dash-user-role{font-size:12px;color:var(--muted)}
+.dash-nav{display:flex;flex-direction:column;gap:2px}
+.dash-nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;border-radius:9px;font-size:14px;font-weight:500;
+  color:var(--muted);cursor:pointer;transition:all 0.2s;
+  border:none;background:none;text-align:left;width:100%;
+}
+.dash-nav-item:hover{color:var(--text);background:rgba(255,255,255,0.05)}
+.dash-nav-item.active{color:var(--green-400);background:rgba(43,163,74,0.1)}
+.dash-nav-item .icon{font-size:16px;width:20px;text-align:center}
+.dash-badge{
+  margin-left:auto;padding:2px 7px;border-radius:100px;
+  font-size:10px;font-weight:700;
+  background:var(--red);color:#fff;
+}
+
+/* Dashboard cards */
+.kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
+.kpi-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r);padding:20px;
+  display:flex;flex-direction:column;gap:4px;
+}
+.kpi-val{font-family:var(--font-display);font-size:28px;font-weight:700}
+.kpi-lbl{font-size:12px;color:var(--muted)}
+.kpi-change{font-size:12px;display:flex;align-items:center;gap:4px;margin-top:4px}
+.kpi-up{color:var(--green-400)}.kpi-down{color:#f87171}
+
+/* Table */
+.table-wrap{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r-lg);overflow:hidden;
+}
+.table-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 20px;border-bottom:1px solid var(--border);
+}
+.table-title{font-size:16px;font-weight:600}
+table{width:100%;border-collapse:collapse}
+th{
+  padding:12px 16px;text-align:left;
+  font-size:11px;font-weight:600;letter-spacing:0.5px;
+  text-transform:uppercase;color:var(--muted);
+  background:rgba(255,255,255,0.02);border-bottom:1px solid var(--border);
+}
+td{
+  padding:13px 16px;font-size:14px;
+  border-bottom:1px solid rgba(255,255,255,0.04);
+}
+tr:hover td{background:rgba(255,255,255,0.02)}
+tr:last-child td{border-bottom:none}
+
+/* ══════════════════════════════════════════════════════════
+   NGO DIRECTORY
+══════════════════════════════════════════════════════════ */
+.ngo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.ngo-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r-lg);padding:24px;
+  transition:all 0.3s;cursor:pointer;
+}
+.ngo-card:hover{transform:translateY(-4px);border-color:rgba(76,175,104,0.3);box-shadow:var(--glow)}
+.ngo-logo{
+  width:52px;height:52px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;font-size:24px;
+  margin-bottom:12px;background:rgba(255,255,255,0.06);
+  border:1px solid var(--border);
+}
+.ngo-name{font-size:16px;font-weight:600;margin-bottom:4px}
+.ngo-location{font-size:13px;color:var(--muted);margin-bottom:12px}
+.ngo-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.ngo-stat{background:rgba(255,255,255,0.04);border-radius:8px;padding:8px 10px}
+.ngo-stat-val{font-size:15px;font-weight:700;color:var(--green-400)}
+.ngo-stat-lbl{font-size:10px;color:var(--muted);margin-top:2px}
+.ngo-tags{display:flex;gap:6px;flex-wrap:wrap}
+
+/* ══════════════════════════════════════════════════════════
+   MAP / LOCATION SECTION
+══════════════════════════════════════════════════════════ */
+.map-container{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);
+  overflow:hidden;position:relative;
+}
+.map-placeholder{
+  height:400px;
+  background:
+    linear-gradient(rgba(10,46,18,0.95),rgba(10,46,18,0.95)),
+    repeating-linear-gradient(0deg,transparent,transparent 40px,rgba(255,255,255,0.02) 40px,rgba(255,255,255,0.02) 41px),
+    repeating-linear-gradient(90deg,transparent,transparent 40px,rgba(255,255,255,0.02) 40px,rgba(255,255,255,0.02) 41px);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+}
+.map-dot{
+  position:absolute;width:12px;height:12px;border-radius:50%;
+  background:var(--green-400);
+  box-shadow:0 0 0 0 rgba(76,175,104,0.4);
+  animation:mapPulse 2s infinite;
+  cursor:pointer;
+}
+@keyframes mapPulse{
+  0%{box-shadow:0 0 0 0 rgba(76,175,104,0.4)}
+  70%{box-shadow:0 0 0 16px rgba(76,175,104,0)}
+  100%{box-shadow:0 0 0 0 rgba(76,175,104,0)}
+}
+.map-tooltip{
+  position:absolute;bottom:120%;left:50%;transform:translateX(-50%);
+  background:var(--mid);border:1px solid var(--border);
+  border-radius:8px;padding:8px 12px;font-size:12px;white-space:nowrap;
+  opacity:0;pointer-events:none;transition:opacity 0.2s;
+  box-shadow:var(--shadow);
+}
+.map-dot:hover .map-tooltip{opacity:1}
+.map-dot:hover{background:var(--amber);animation:none;box-shadow:0 0 0 8px rgba(245,158,11,0.2)}
+
+/* ══════════════════════════════════════════════════════════
+   WHATSAPP SECTION
+══════════════════════════════════════════════════════════ */
+.phone-frame{
+  width:280px;flex-shrink:0;
+  background:var(--mid);border:6px solid #1a1a2e;border-radius:36px;
+  overflow:hidden;box-shadow:0 32px 64px rgba(0,0,0,0.5);
+  position:relative;
+}
+.phone-notch{
+  width:100%;height:28px;background:#1a1a2e;
+  display:flex;align-items:center;justify-content:center;
+}
+.phone-notch::after{
+  content:'';width:80px;height:14px;
+  background:var(--mid);border-radius:0 0 8px 8px;
+}
+.wa-header{
+  padding:10px 14px;
+  background:#075E54;
+  display:flex;align-items:center;gap:10px;
+}
+.wa-avatar{width:36px;height:36px;border-radius:50%;background:var(--green-600);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff}
+.wa-name{font-size:13px;font-weight:600;color:#fff}
+.wa-status{font-size:11px;color:rgba(255,255,255,0.7)}
+.wa-body{
+  padding:10px;background:#0d1117;
+  height:320px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;
+  scrollbar-width:none;
+}
+.wa-msg{
+  padding:8px 10px;border-radius:10px;
+  max-width:85%;font-size:11px;line-height:1.5;
+}
+.wa-msg-in{background:#1e2535;color:#e8edf5;align-self:flex-start;border-radius:0 10px 10px 10px}
+.wa-msg-out{background:#005C4B;color:#e8edf5;align-self:flex-end;border-radius:10px 0 10px 10px}
+.wa-msg-time{font-size:9px;color:rgba(255,255,255,0.4);display:block;text-align:right;margin-top:3px}
+.wa-input-bar{
+  padding:8px;background:#1a2030;
+  display:flex;align-items:center;gap:6px;border-top:1px solid var(--border);
+}
+.wa-input{
+  flex:1;background:rgba(255,255,255,0.07);border:none;
+  border-radius:20px;padding:7px 12px;color:#fff;font-size:11px;outline:none;
+}
+.wa-send{
+  width:34px;height:34px;border-radius:50%;
+  background:var(--green-600);border:none;color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;
+}
+
+/* ══════════════════════════════════════════════════════════
+   TESTIMONIALS
+══════════════════════════════════════════════════════════ */
+.testimonials-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.testimonial-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r-lg);padding:28px;
+  display:flex;flex-direction:column;gap:16px;
+  transition:all 0.3s;
+}
+.testimonial-card:hover{transform:translateY(-4px);border-color:rgba(76,175,104,0.25)}
+.quote-mark{
+  font-family:var(--font-display);font-size:48px;
+  color:var(--green-700);line-height:1;margin-bottom:-8px;
+}
+.testimonial-text{font-size:15px;color:var(--text);line-height:1.7;flex:1}
+.testimonial-author{display:flex;align-items:center;gap:12px;padding-top:12px;border-top:1px solid var(--border)}
+.author-avatar{
+  width:40px;height:40px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;font-weight:700;color:#fff;flex-shrink:0;
+}
+.author-name{font-size:14px;font-weight:600}
+.author-role{font-size:12px;color:var(--muted)}
+.stars{color:var(--amber);font-size:12px;margin-bottom:2px}
+
+/* ══════════════════════════════════════════════════════════
+   FAQ
+══════════════════════════════════════════════════════════ */
+.faq-list{display:flex;flex-direction:column;gap:8px;max-width:720px;margin:0 auto}
+.faq-item{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r);overflow:hidden;transition:border-color 0.2s;
+}
+.faq-item.open{border-color:rgba(76,175,104,0.3)}
+.faq-q{
+  padding:18px 20px;display:flex;align-items:center;justify-content:space-between;
+  cursor:pointer;font-size:15px;font-weight:500;
+  user-select:none;
+}
+.faq-q:hover{color:var(--green-400)}
+.faq-chevron{transition:transform 0.3s;font-size:18px;color:var(--muted);flex-shrink:0}
+.faq-item.open .faq-chevron{transform:rotate(180deg)}
+.faq-a{
+  max-height:0;overflow:hidden;
+  transition:max-height 0.4s ease,padding 0.3s;
+}
+.faq-item.open .faq-a{max-height:300px}
+.faq-a-inner{padding:0 20px 18px;color:var(--muted);font-size:14px;line-height:1.7}
+
+/* ══════════════════════════════════════════════════════════
+   PROGRESS / UPLOAD
+══════════════════════════════════════════════════════════ */
+.progress-bar-wrap{background:rgba(255,255,255,0.06);border-radius:100px;height:6px;overflow:hidden}
+.progress-bar-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--green-600),var(--green-400));transition:width 1s ease}
+.upload-zone{
+  border:2px dashed var(--border);border-radius:var(--r);
+  padding:32px;text-align:center;
+  transition:all 0.3s;cursor:pointer;
+}
+.upload-zone:hover,.upload-zone.drag{
+  border-color:var(--green-500);background:rgba(43,163,74,0.06);
+}
+
+/* ══════════════════════════════════════════════════════════
+   NOTIFICATION TOAST
+══════════════════════════════════════════════════════════ */
+#toast-container{
+  position:fixed;top:88px;right:20px;z-index:5000;
+  display:flex;flex-direction:column;gap:8px;
+}
+.toast{
+  background:var(--mid);border:1px solid var(--border);
+  border-radius:var(--r);padding:14px 16px;
+  display:flex;align-items:flex-start;gap:10px;
+  max-width:320px;box-shadow:var(--shadow);
+  animation:toastIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+.toast.exit{animation:toastOut 0.3s ease forwards}
+@keyframes toastIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+@keyframes toastOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(40px)}}
+.toast-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+.toast-title{font-size:14px;font-weight:600;margin-bottom:2px}
+.toast-msg{font-size:12px;color:var(--muted);line-height:1.4}
+.toast-close{margin-left:auto;cursor:pointer;color:var(--muted);flex-shrink:0;font-size:16px;transition:color 0.2s}
+.toast-close:hover{color:var(--text)}
+.toast-success{border-left:3px solid var(--green-500)}
+.toast-error{border-left:3px solid var(--red)}
+.toast-info{border-left:3px solid var(--blue)}
+.toast-warn{border-left:3px solid var(--amber)}
+
+/* ══════════════════════════════════════════════════════════
+   FOOTER
+══════════════════════════════════════════════════════════ */
+footer{
+  background:var(--mid);border-top:1px solid var(--border);
+  padding:64px 0 0;margin-top:80px;
+}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-bottom:48px}
+.footer-brand-desc{font-size:14px;color:var(--muted);line-height:1.7;margin-top:12px;margin-bottom:20px}
+.footer-social{display:flex;gap:10px}
+.social-btn{
+  width:36px;height:36px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,0.06);border:1px solid var(--border);
+  font-size:16px;cursor:pointer;transition:all 0.2s;
+}
+.social-btn:hover{background:rgba(43,163,74,0.15);border-color:rgba(76,175,104,0.4)}
+.footer-heading{font-size:13px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.footer-links{display:flex;flex-direction:column;gap:8px}
+.footer-link{font-size:14px;color:var(--muted);transition:color 0.2s;cursor:pointer}
+.footer-link:hover{color:var(--green-400)}
+.footer-bottom{
+  border-top:1px solid var(--border);
+  padding:20px 0;display:flex;align-items:center;justify-content:space-between;
+}
+.footer-copy{font-size:13px;color:var(--muted)}
+.sdg-badge{
+  display:flex;align-items:center;gap:8px;
+  padding:6px 14px;border-radius:8px;
+  background:rgba(43,163,74,0.08);border:1px solid rgba(76,175,104,0.2);
+  font-size:12px;color:var(--green-400);font-weight:600;
+}
+
+/* ══════════════════════════════════════════════════════════
+   SEARCH BAR
+══════════════════════════════════════════════════════════ */
+.search-bar{
+  display:flex;align-items:center;gap:0;
+  background:rgba(255,255,255,0.05);border:1.5px solid var(--border);
+  border-radius:12px;overflow:hidden;
+  transition:border-color 0.2s,box-shadow 0.2s;
+}
+.search-bar:focus-within{border-color:var(--green-500);box-shadow:0 0 0 3px rgba(43,163,74,0.12)}
+.search-input{
+  flex:1;padding:13px 16px;background:none;
+  border:none;outline:none;color:var(--text);font-size:15px;font-family:var(--font-body);
+}
+.search-btn{
+  padding:13px 20px;background:var(--green-600);border:none;
+  color:#fff;font-size:14px;font-weight:600;cursor:pointer;
+  font-family:var(--font-body);transition:background 0.2s;
+}
+.search-btn:hover{background:var(--green-500)}
+
+/* ══════════════════════════════════════════════════════════
+   COUNTDOWN / IMPACT METER
+══════════════════════════════════════════════════════════ */
+.impact-ring{
+  position:relative;width:120px;height:120px;flex-shrink:0;
+}
+.impact-ring svg{transform:rotate(-90deg)}
+.ring-bg{fill:none;stroke:rgba(255,255,255,0.06);stroke-width:8}
+.ring-fill{
+  fill:none;stroke:var(--green-500);stroke-width:8;
+  stroke-linecap:round;
+  stroke-dasharray:339;stroke-dashoffset:339;
+  transition:stroke-dashoffset 1.5s ease;
+}
+.ring-text{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;
+}
+.ring-num{font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--green-400)}
+.ring-lbl{font-size:10px;color:var(--muted);margin-top:2px}
+
+/* ══════════════════════════════════════════════════════════
+   VOLUNTEER SECTION
+══════════════════════════════════════════════════════════ */
+.volunteer-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.volunteer-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r-lg);padding:20px;text-align:center;
+  transition:all 0.3s;
+}
+.volunteer-card:hover{transform:translateY(-4px);border-color:rgba(76,175,104,0.3)}
+.vol-avatar{
+  width:64px;height:64px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 12px;font-size:24px;font-weight:700;color:#fff;
+  background:linear-gradient(135deg,var(--green-700),var(--green-500));
+}
+.vol-name{font-size:15px;font-weight:600;margin-bottom:2px}
+.vol-tasks{font-size:13px;color:var(--muted)}
+.vol-stars{color:var(--amber);font-size:13px;margin-top:6px}
+
+/* ══════════════════════════════════════════════════════════
+   SECTION HEADERS
+══════════════════════════════════════════════════════════ */
+.section-header{text-align:center;margin-bottom:56px}
+.section-header .tag{margin-bottom:16px}
+.section-header .h2{margin-bottom:16px}
+.section-header .subtext{max-width:540px;margin:0 auto}
+
+/* ══════════════════════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════════════════════ */
+@media(max-width:1024px){
+  .hero-content{grid-template-columns:1fr;gap:40px}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .steps-container{grid-template-columns:repeat(2,1fr);gap:32px}
+  .steps-container::before{display:none}
+  .categories-grid{grid-template-columns:repeat(2,1fr)}
+  .ngo-grid{grid-template-columns:repeat(2,1fr)}
+  .testimonials-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .volunteer-grid{grid-template-columns:repeat(2,1fr)}
+  .dash-layout{grid-template-columns:1fr}
+  .kpi-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:768px){
+  .nav-links{display:none}
+  #hamburger{display:block}
+  .hero-stats{gap:20px}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .categories-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr}
+  .footer-bottom{flex-direction:column;gap:12px}
+  .kpi-grid{grid-template-columns:1fr}
+  .phone-frame{width:240px}
+  .ngo-grid{grid-template-columns:1fr}
+}
+
+/* Mobile nav */
+#mobile-nav{
+  position:fixed;inset:0;z-index:999;
+  background:rgba(0,0,0,0.95);backdrop-filter:blur(20px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;
+  opacity:0;pointer-events:none;transition:opacity 0.3s;
+}
+#mobile-nav.open{opacity:1;pointer-events:all}
+.mobile-link{font-size:28px;font-family:var(--font-display);font-weight:700;color:var(--muted);transition:color 0.2s}
+.mobile-link:hover{color:var(--green-400)}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--dark)}
+::-webkit-scrollbar-thumb{background:var(--green-800);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--green-600)}
+</style>
+</head>
+<body>
+
+<!-- Custom cursors -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- Toast container -->
+<div id="toast-container"></div>
+
+<!-- ═══════════════ NAVBAR ═══════════════ -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a class="nav-logo" href="#hero">
+      <div class="nav-logo-mark">🌱</div>
+      <span class="nav-logo-text">Zero<span>Hunger</span></span>
+    </a>
+    <div class="nav-links">
+      <a class="nav-link active" href="#hero">Home</a>
+      <a class="nav-link" href="#categories">Donate</a>
+      <a class="nav-link" href="#ngos">NGOs</a>
+      <a class="nav-link" href="#volunteer-section">Volunteer</a>
+      <a class="nav-link" href="#dashboard">Dashboard</a>
+      <a class="nav-link" href="#about">About</a>
+    </div>
+    <div class="nav-actions">
+      <div class="nav-notif" onclick="showToast('info','3 new alerts','NGOs near you have accepted donations')">
+        <span>🔔</span><div class="notif-dot"></div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="openModal('login')">Sign In</button>
+      <button class="btn btn-primary btn-sm" onclick="openModal('register')">Get Started</button>
+      <button id="hamburger" onclick="toggleMobileNav()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile nav -->
+<div id="mobile-nav">
+  <a class="mobile-link" href="#hero" onclick="toggleMobileNav()">Home</a>
+  <a class="mobile-link" href="#categories" onclick="toggleMobileNav()">Donate</a>
+  <a class="mobile-link" href="#ngos" onclick="toggleMobileNav()">NGOs</a>
+  <a class="mobile-link" href="#volunteer-section" onclick="toggleMobileNav()">Volunteer</a>
+  <a class="mobile-link" href="#dashboard" onclick="toggleMobileNav()">Dashboard</a>
+  <button class="btn btn-primary btn-lg" onclick="openModal('register');toggleMobileNav()" style="margin-top:20px">Get Started Free</button>
+</div>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="hero-content">
+    <div>
+      <div class="hero-eyebrow">🌍 UN SDG Goal 2 — Zero Hunger</div>
+      <h1 class="hero-title heading">
+        End Hunger<br>
+        <span class="line-green">One Donation</span><br>
+        At a Time.
+      </h1>
+      <p class="hero-desc">A community-driven platform connecting donors, NGOs, and volunteers to eliminate food waste and hunger — powered by real-time WhatsApp alerts and transparent tracking.</p>
+      <div class="hero-actions">
+        <button class="btn btn-primary btn-lg" onclick="openModal('donate')">🎁 Donate Now</button>
+        <button class="btn btn-outline btn-lg" onclick="document.getElementById('ngos').scrollIntoView({behavior:'smooth'})">Browse NGOs →</button>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="hero-stat-num" id="count-donations">0</div>
+          <div class="hero-stat-lbl">Donations Made</div>
+        </div>
+        <div>
+          <div class="hero-stat-num" id="count-ngos">0</div>
+          <div class="hero-stat-lbl">Partner NGOs</div>
+        </div>
+        <div>
+          <div class="hero-stat-num" id="count-cities">0</div>
+          <div class="hero-stat-lbl">Cities Active</div>
+        </div>
+      </div>
+    </div>
+    <!-- Live activity panel -->
+    <div class="hero-panel">
+      <div class="hero-panel-header">
+        <span class="live-dot">Live Activity</span>
+        <span style="font-size:12px;color:var(--muted)" class="mono">Updated just now</span>
+      </div>
+      <div class="activity-feed" id="activity-feed"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ TICKER ═══════════════ -->
+<div class="ticker-wrap">
+  <div class="ticker" id="ticker">
+    <div class="ticker-item">🍱 Food donated in Jalandhar <strong>2 min ago</strong></div>
+    <div class="ticker-sep">✦</div>
+    <div class="ticker-item">👗 Clothes collected by Helping Hands NGO</div>
+    <div class="ticker-sep">✦</div>
+    <div class="ticker-item">💊 Medicines dispatched to Phagwara</div>
+    <div class="ticker-sep">✦</div>
+    <div class="ticker-item">🚀 Volunteer Arjun completed 28 tasks this month</div>
+    <div class="ticker-sep">✦</div>
+    <div class="ticker-item">📦 12,400+ meals delivered across Punjab</div>
+    <div class="ticker-sep">✦</div>
+    <div class="ticker-item">🌱 New NGO registered — CareShare Ludhiana</div>
+    <div class="ticker-sep">✦</div>
+    <div class="ticker-item">💰 ₹8.4 Lakhs raised this quarter</div>
+    <div class="ticker-sep">✦</div>
+    <div class="ticker-item">🍱 Food donated in Jalandhar <strong>2 min ago</strong></div>
+    <div class="ticker-sep">✦</div>
+    <div class="ticker-item">👗 Clothes collected by Helping Hands NGO</div>
+    <div class="ticker-sep">✦</div>
+    <div class="ticker-item">💊 Medicines dispatched to Phagwara</div>
+    <div class="ticker-sep">✦</div>
+    <div class="ticker-item">🚀 Volunteer Arjun completed 28 tasks this month</div>
+    <div class="ticker-sep">✦</div>
+    <div class="ticker-item">📦 12,400+ meals delivered across Punjab</div>
+    <div class="ticker-sep">✦</div>
+  </div>
+</div>
+
+<!-- ═══════════════ STATS ═══════════════ -->
+<section class="section-sm">
+  <div class="container">
+    <div class="stats-grid reveal">
+      <div class="stat-cell">
+        <div class="stat-number" data-target="12450">0</div>
+        <div class="stat-label">Total Donations</div>
+        <div class="stat-change">↑ +23% this month</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-number" data-target="340">0</div>
+        <div class="stat-label">Partner NGOs</div>
+        <div class="stat-change">↑ +12 new this week</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-number" data-target="5200">0</div>
+        <div class="stat-label">Active Volunteers</div>
+        <div class="stat-change">↑ +340 joined</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-number" data-target="18">0</div>
+        <div class="stat-label">Cities Covered</div>
+        <div class="stat-change">↑ 3 new cities</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ HOW IT WORKS ═══════════════ -->
+<section class="section">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="tag">Simple Process</div>
+      <h2 class="h2 heading">How ZeroHunger Works</h2>
+      <p class="subtext">From donation to delivery in minutes — not days. Our platform removes friction at every step.</p>
+    </div>
+    <div class="steps-container">
+      <div class="step-item reveal stagger-1">
+        <div class="step-icon" data-step="1">📋</div>
+        <h3 class="step-title">Register</h3>
+        <p class="step-desc">Sign up as a Donor, NGO, or Volunteer in under 2 minutes. No complex forms.</p>
+      </div>
+      <div class="step-item reveal stagger-2">
+        <div class="step-icon" data-step="2">🎁</div>
+        <h3 class="step-title">Submit Donation</h3>
+        <p class="step-desc">Choose food, clothes, medicines, sanitary items, essentials, or money. Describe and submit.</p>
+      </div>
+      <div class="step-item reveal stagger-3">
+        <div class="step-icon" data-step="3">📱</div>
+        <h3 class="step-title">Instant Alert</h3>
+        <p class="step-desc">NGOs and volunteers receive WhatsApp notifications instantly. 98% open rate vs email.</p>
+      </div>
+      <div class="step-item reveal stagger-4">
+        <div class="step-icon" data-step="4">🚚</div>
+        <h3 class="step-title">Quick Pickup</h3>
+        <p class="step-desc">Items collected and delivered. You track everything in real-time. Donor gets confirmation.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ DONATION CATEGORIES ═══════════════ -->
+<section class="section" id="categories" style="background:rgba(255,255,255,0.01)">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="tag">What You Can Give</div>
+      <h2 class="h2 heading">Donation Categories</h2>
+      <p class="subtext">We accept far more than just food. Every form of support reaches someone in need.</p>
+    </div>
+    <div class="categories-grid">
+      <div class="cat-card reveal stagger-1" style="--cat-color:var(--green-500);--cat-bg:rgba(43,163,74,0.1)" onclick="openModal('donate')">
+        <div class="cat-icon">🍱</div>
+        <div class="cat-title">Food & Meals</div>
+        <div class="cat-desc">Cooked meals, groceries, packaged food, dry rations — anything edible and safe.</div>
+        <div class="cat-count"><span>4,820 donations</span> <span style="margin-left:auto;color:var(--green-400);font-weight:600">Most Popular</span></div>
+        <div class="cat-bar"><div class="cat-bar-fill" style="width:0" data-w="89%"></div></div>
+      </div>
+      <div class="cat-card reveal stagger-2" style="--cat-color:#60a5fa;--cat-bg:rgba(29,78,216,0.1)" onclick="openModal('donate')">
+        <div class="cat-icon">👗</div>
+        <div class="cat-title">Clothes & Fabric</div>
+        <div class="cat-desc">Clean used or new clothing, blankets, bedsheets, shoes — all sizes welcome.</div>
+        <div class="cat-count"><span>2,340 donations</span></div>
+        <div class="cat-bar"><div class="cat-bar-fill" style="width:0;background:#60a5fa" data-w="56%"></div></div>
+      </div>
+      <div class="cat-card reveal stagger-3" style="--cat-color:#f87171;--cat-bg:rgba(220,38,38,0.1)" onclick="openModal('donate')">
+        <div class="cat-icon">💊</div>
+        <div class="cat-title">Medicines</div>
+        <div class="cat-desc">Sealed, in-date medicines, first aid kits, medical supplies — with prescription details.</div>
+        <div class="cat-count"><span>980 donations</span></div>
+        <div class="cat-bar"><div class="cat-bar-fill" style="width:0;background:#f87171" data-w="38%"></div></div>
+      </div>
+      <div class="cat-card reveal stagger-1" style="--cat-color:var(--amber);--cat-bg:rgba(245,158,11,0.1)" onclick="openModal('donate')">
+        <div class="cat-icon">🧴</div>
+        <div class="cat-title">Sanitary Items</div>
+        <div class="cat-desc">Hygiene products, sanitary pads, soaps, toothbrushes — basic dignity supplies.</div>
+        <div class="cat-count"><span>760 donations</span></div>
+        <div class="cat-bar"><div class="cat-bar-fill" style="width:0;background:var(--amber)" data-w="29%"></div></div>
+      </div>
+      <div class="cat-card reveal stagger-2" style="--cat-color:#2dd4bf;--cat-bg:rgba(13,148,136,0.1)" onclick="openModal('donate')">
+        <div class="cat-icon">📦</div>
+        <div class="cat-title">Essential Goods</div>
+        <div class="cat-desc">Stationery, toys, books, kitchenware, household supplies, tools for daily life.</div>
+        <div class="cat-count"><span>1,120 donations</span></div>
+        <div class="cat-bar"><div class="cat-bar-fill" style="width:0;background:#2dd4bf" data-w="42%"></div></div>
+      </div>
+      <div class="cat-card reveal stagger-3" style="--cat-color:#a78bfa;--cat-bg:rgba(124,58,237,0.1)" onclick="openModal('donate')">
+        <div class="cat-icon">💰</div>
+        <div class="cat-title">Monetary Support</div>
+        <div class="cat-desc">Direct financial contributions to NGO operational costs — 100% tracked and transparent.</div>
+        <div class="cat-count"><span>₹8.4L raised</span></div>
+        <div class="cat-bar"><div class="cat-bar-fill" style="width:0;background:#a78bfa" data-w="74%"></div></div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:32px" class="reveal">
+      <button class="btn btn-primary btn-lg" onclick="openModal('donate')">Start Donating Today →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ IMPACT SECTION ═══════════════ -->
+<section class="section" id="about">
+  <div class="container">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center">
+      <div class="reveal-left">
+        <div class="tag" style="margin-bottom:16px">Real Impact</div>
+        <h2 class="h2 heading" style="margin-bottom:16px">Your Donations Change Lives</h2>
+        <p class="subtext" style="margin-bottom:32px">Every donation on ZeroHunger is tracked end-to-end. You see where your contribution goes, who receives it, and the impact it creates.</p>
+        <div style="display:flex;flex-direction:column;gap:20px">
+          <div style="display:flex;align-items:center;gap:16px">
+            <div class="impact-ring">
+              <svg width="120" height="120" viewBox="0 0 120 120">
+                <circle class="ring-bg" cx="60" cy="60" r="54"/>
+                <circle class="ring-fill" cx="60" cy="60" r="54" data-pct="89"/>
+              </svg>
+              <div class="ring-text"><span class="ring-num">89%</span><span class="ring-lbl">Delivery Rate</span></div>
+            </div>
+            <div>
+              <div style="font-size:18px;font-weight:600;margin-bottom:4px">98% Delivery Success</div>
+              <div class="subtext" style="font-size:14px">Donations reach their destination within 24 hours on average, with real-time tracking at every step.</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:16px">
+            <div class="impact-ring">
+              <svg width="120" height="120" viewBox="0 0 120 120">
+                <circle class="ring-bg" cx="60" cy="60" r="54"/>
+                <circle class="ring-fill" cx="60" cy="60" r="54" data-pct="76" style="stroke:var(--amber)"/>
+              </svg>
+              <div class="ring-text"><span class="ring-num" style="color:var(--amber)">76%</span><span class="ring-lbl">Volunteer Rate</span></div>
+            </div>
+            <div>
+              <div style="font-size:18px;font-weight:600;margin-bottom:4px">30-Min Average Response</div>
+              <div class="subtext" style="font-size:14px">NGOs and volunteers respond to WhatsApp alerts 4× faster than email-based systems.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="reveal-right">
+        <!-- WhatsApp Demo -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:16px">
+          <div class="tag">Live Demo — WhatsApp Notification</div>
+          <div class="phone-frame">
+            <div class="phone-notch"></div>
+            <div class="wa-header">
+              <div class="wa-avatar">ZH</div>
+              <div>
+                <div class="wa-name">ZeroHunger Alerts</div>
+                <div class="wa-status">🟢 Online</div>
+              </div>
+              <span style="margin-left:auto;font-size:18px">⋮</span>
+            </div>
+            <div class="wa-body" id="wa-demo"></div>
+            <div class="wa-input-bar">
+              <input class="wa-input" placeholder="Type a message…" id="wa-input"/>
+              <button class="wa-send" onclick="sendWaMessage()">➤</button>
+            </div>
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="simulateWA()">▶ Simulate Donation Alert</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ NGO DIRECTORY ═══════════════ -->
+<section class="section" id="ngos" style="background:rgba(255,255,255,0.01)">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="tag">Verified Partners</div>
+      <h2 class="h2 heading">NGO Directory</h2>
+      <p class="subtext">Connect with 340+ verified non-profit organizations working across 18 cities.</p>
+    </div>
+    <div style="max-width:560px;margin:0 auto 32px" class="reveal">
+      <div class="search-bar">
+        <input class="search-input" placeholder="Search NGOs by city, name or category…" id="ngo-search" oninput="filterNGOs()"/>
+        <button class="search-btn">Search</button>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:32px" class="reveal">
+      <button class="radio-chip active" onclick="filterNGOsByType(this,'all')">All</button>
+      <button class="radio-chip" onclick="filterNGOsByType(this,'food')">🍱 Food</button>
+      <button class="radio-chip" onclick="filterNGOsByType(this,'health')">💊 Health</button>
+      <button class="radio-chip" onclick="filterNGOsByType(this,'education')">📚 Education</button>
+      <button class="radio-chip" onclick="filterNGOsByType(this,'clothing')">👗 Clothing</button>
+    </div>
+    <div class="ngo-grid" id="ngo-grid"></div>
+    <div style="text-align:center;margin-top:32px" class="reveal">
+      <button class="btn btn-ghost" onclick="showToast('info','Coming Soon','Full NGO directory with 340+ NGOs launching next month!')">View All 340+ NGOs →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ MAP ═══════════════ -->
+<section class="section-sm">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="tag">Coverage</div>
+      <h2 class="h2 heading">Active Across Punjab</h2>
+      <p class="subtext">Hover over dots to see real-time donation activity in your city.</p>
+    </div>
+    <div class="map-container reveal">
+      <div class="map-placeholder" id="map-placeholder">
+        <div style="text-align:center;z-index:2;position:relative">
+          <div style="font-size:48px;margin-bottom:12px">🗺️</div>
+          <div style="font-size:18px;font-weight:600;color:var(--green-400)">Interactive Coverage Map</div>
+          <div style="font-size:14px;color:var(--muted);margin-top:8px">18 cities · 340+ NGOs · 5,200+ volunteers</div>
+        </div>
+      </div>
+      <div style="padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border)">
+        <div style="display:flex;gap:20px">
+          <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)"><span style="width:10px;height:10px;border-radius:50%;background:var(--green-400);display:inline-block"></span>High Activity</div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)"><span style="width:10px;height:10px;border-radius:50%;background:var(--amber);display:inline-block"></span>Moderate</div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)"><span style="width:10px;height:10px;border-radius:50%;background:var(--muted);display:inline-block"></span>New Area</div>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="showToast('info','Map Feature','Full interactive map with Google Maps integration coming soon!')">📍 Find My City</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ VOLUNTEER SECTION ═══════════════ -->
+<section class="section" id="volunteer-section">
+  <div class="container">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;margin-bottom:56px">
+      <div class="reveal-left">
+        <div class="tag" style="margin-bottom:16px">Join the Movement</div>
+        <h2 class="h2 heading" style="margin-bottom:16px">Become a Volunteer</h2>
+        <p class="subtext" style="margin-bottom:24px">Help pick up, sort, and deliver donations in your neighborhood. Every hour you give feeds a family, heals a patient, or warms a child.</p>
+        <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:28px">
+          <div style="display:flex;align-items:center;gap:12px"><span style="font-size:20px">⏱️</span><span>Flexible hours — volunteer when you want</span></div>
+          <div style="display:flex;align-items:center;gap:12px"><span style="font-size:20px">🏅</span><span>Earn badges, points & certificates</span></div>
+          <div style="display:flex;align-items:center;gap:12px"><span style="font-size:20px">📍</span><span>Tasks near you — no travel needed</span></div>
+          <div style="display:flex;align-items:center;gap:12px"><span style="font-size:20px">📱</span><span>Task management via WhatsApp & app</span></div>
+        </div>
+        <button class="btn btn-primary btn-lg" onclick="openModal('volunteer')">Join as Volunteer →</button>
+      </div>
+      <div class="reveal-right">
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:24px">
+          <div style="font-size:15px;font-weight:600;margin-bottom:16px">🏆 Top Volunteers This Month</div>
+          <div class="volunteer-grid" id="volunteer-grid"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ DASHBOARD PREVIEW ═══════════════ -->
+<section class="section" id="dashboard" style="background:rgba(255,255,255,0.01)">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="tag">Platform Demo</div>
+      <h2 class="h2 heading">Powerful Dashboards</h2>
+      <p class="subtext">Real-time visibility for every stakeholder. Donors, NGOs, volunteers and admins each get a tailored view.</p>
+    </div>
+
+    <!-- Role tabs -->
+    <div style="display:flex;justify-content:center;margin-bottom:32px" class="reveal">
+      <div class="tabs">
+        <button class="tab active" onclick="switchDash(this,'donor')">Donor</button>
+        <button class="tab" onclick="switchDash(this,'ngo')">NGO Admin</button>
+        <button class="tab" onclick="switchDash(this,'volunteer')">Volunteer</button>
+        <button class="tab" onclick="switchDash(this,'admin')">Admin</button>
+      </div>
+    </div>
+
+    <!-- Donor Dashboard -->
+    <div id="dash-donor" class="tab-content active">
+      <div class="dash-layout">
+        <div class="dash-sidebar">
+          <div class="dash-user">
+            <div class="dash-avatar">SS</div>
+            <div><div class="dash-user-name">Satyam Saroj</div><div class="dash-user-role">Donor · Jalandhar</div></div>
+          </div>
+          <div class="dash-nav">
+            <button class="dash-nav-item active"><span class="icon">📊</span>Dashboard</button>
+            <button class="dash-nav-item" onclick="openModal('donate')"><span class="icon">🎁</span>New Donation</button>
+            <button class="dash-nav-item"><span class="icon">📋</span>My Donations<div class="dash-badge">5</div></button>
+            <button class="dash-nav-item"><span class="icon">🔍</span>Track Status</button>
+            <button class="dash-nav-item" onclick="document.getElementById('ngos').scrollIntoView({behavior:'smooth'})"><span class="icon">🏢</span>Find NGOs</button>
+            <button class="dash-nav-item"><span class="icon">🔔</span>Alerts<div class="dash-badge" style="background:var(--green-600)">3</div></button>
+            <button class="dash-nav-item"><span class="icon">⚙️</span>Settings</button>
+          </div>
+        </div>
+        <div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+            <div>
+              <h3 class="h4">Good morning, Satyam 👋</h3>
+              <div style="font-size:14px;color:var(--muted);margin-top:4px">You've helped 23 families this month. Thank you!</div>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="openModal('donate')">+ New Donation</button>
+          </div>
+          <div class="kpi-grid">
+            <div class="kpi-card"><div class="kpi-val highlight">23</div><div class="kpi-lbl">Total Donations</div><div class="kpi-change kpi-up">↑ +5 this month</div></div>
+            <div class="kpi-card"><div class="kpi-val" style="color:var(--amber)">5</div><div class="kpi-lbl">Pending</div><div class="kpi-change" style="color:var(--muted)">→ Awaiting pickup</div></div>
+            <div class="kpi-card"><div class="kpi-val" style="color:var(--green-300)">18</div><div class="kpi-lbl">Completed</div><div class="kpi-change kpi-up">↑ +3 this week</div></div>
+          </div>
+          <div class="table-wrap">
+            <div class="table-header">
+              <span class="table-title">Recent Donations</span>
+              <button class="btn btn-ghost btn-sm">Export CSV</button>
+            </div>
+            <table>
+              <thead><tr><th>ID</th><th>Category</th><th>NGO</th><th>Date</th><th>Status</th><th>Action</th></tr></thead>
+              <tbody>
+                <tr><td class="mono" style="color:var(--muted)">#042</td><td>🍱 Food</td><td>Helping Hands</td><td>15 Feb</td><td><span class="badge badge-green">✓ Completed</span></td><td><button class="btn btn-ghost btn-sm" onclick="showToast('info','Donation #042','5kg rice delivered to 12 families in Sector 7')">View</button></td></tr>
+                <tr><td class="mono" style="color:var(--muted)">#041</td><td>👗 Clothes</td><td>CareShare</td><td>12 Feb</td><td><span class="badge badge-blue">🚚 Transit</span></td><td><button class="btn btn-ghost btn-sm" onclick="showToast('info','Tracking #041','Volunteer Arjun is 2km away — estimated 15 min')">Track</button></td></tr>
+                <tr><td class="mono" style="color:var(--muted)">#040</td><td>💊 Medicine</td><td>MedAid India</td><td>10 Feb</td><td><span class="badge badge-amber">⏳ Pending</span></td><td><button class="btn btn-ghost btn-sm" onclick="showToast('warn','Pending #040','No NGO has accepted yet. We\'ll notify you on WhatsApp')">Edit</button></td></tr>
+                <tr><td class="mono" style="color:var(--muted)">#039</td><td>💰 Money</td><td>Hope Foundation</td><td>8 Feb</td><td><span class="badge badge-green">✓ Completed</span></td><td><button class="btn btn-ghost btn-sm" onclick="showToast('info','Donation #039','₹5,000 funded 3 days of meals for 50 children')">View</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NGO Dashboard -->
+    <div id="dash-ngo" class="tab-content">
+      <div class="dash-layout">
+        <div class="dash-sidebar">
+          <div class="dash-user">
+            <div class="dash-avatar" style="background:linear-gradient(135deg,var(--blue),#60a5fa)">HH</div>
+            <div><div class="dash-user-name">Helping Hands</div><div class="dash-user-role">NGO · Verified ✓</div></div>
+          </div>
+          <div class="dash-nav">
+            <button class="dash-nav-item active"><span class="icon">📊</span>Overview</button>
+            <button class="dash-nav-item"><span class="icon">📥</span>Incoming<div class="dash-badge">12</div></button>
+            <button class="dash-nav-item"><span class="icon">✅</span>Accepted</button>
+            <button class="dash-nav-item"><span class="icon">🚚</span>In Transit</button>
+            <button class="dash-nav-item"><span class="icon">📈</span>Analytics</button>
+            <button class="dash-nav-item"><span class="icon">👥</span>Volunteers</button>
+            <button class="dash-nav-item"><span class="icon">📱</span>WA Setup</button>
+          </div>
+        </div>
+        <div>
+          <div style="background:rgba(220,38,38,0.08);border:1px solid rgba(220,38,38,0.2);border-radius:var(--r);padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between">
+            <span style="font-size:14px;font-weight:500;color:#f87171">🔔 3 URGENT donations need response — perishable food items!</span>
+            <button class="btn btn-danger btn-sm" onclick="showToast('warn','Urgent Requests','Viewing 3 food donations expiring within 2 hours')">View Urgent</button>
+          </div>
+          <div class="kpi-grid">
+            <div class="kpi-card"><div class="kpi-val" style="color:#f87171">47</div><div class="kpi-lbl">New Requests</div><div class="kpi-change" style="color:#f87171">⚡ 3 Urgent</div></div>
+            <div class="kpi-card"><div class="kpi-val highlight">891</div><div class="kpi-lbl">Total Served</div><div class="kpi-change kpi-up">↑ This year</div></div>
+            <div class="kpi-card"><div class="kpi-val" style="color:var(--amber)">6</div><div class="kpi-lbl">In Transit</div><div class="kpi-change" style="color:var(--muted)">→ 6 volunteers active</div></div>
+          </div>
+          <div class="table-wrap">
+            <div class="table-header">
+              <span class="table-title">Incoming Donation Requests</span>
+              <div style="display:flex;gap:8px">
+                <button class="btn btn-ghost btn-sm">Filter</button>
+                <button class="btn btn-primary btn-sm" onclick="showToast('success','Accepted!','WhatsApp sent to Rahul Singh — pickup scheduled')">Accept All Urgent</button>
+              </div>
+            </div>
+            <table>
+              <thead><tr><th>Donor</th><th>Category</th><th>Qty</th><th>Location</th><th>Urgency</th><th>Actions</th></tr></thead>
+              <tbody>
+                <tr><td>Rahul Singh</td><td>🍱 Food</td><td>20 srv</td><td>Sector-12</td><td><span class="badge badge-red">⚡ Urgent</span></td><td style="display:flex;gap:6px;padding:8px 16px"><button class="btn btn-primary btn-sm" onclick="showToast('success','Accepted!','WhatsApp alert sent to Rahul Singh')">Accept</button><button class="btn btn-ghost btn-sm" onclick="showToast('info','Declined','Donor notified to try another NGO')">Decline</button></td></tr>
+                <tr><td>Priya Kumari</td><td>👗 Clothes</td><td>15 pcs</td><td>Sector-4</td><td><span class="badge badge-amber">Today</span></td><td style="display:flex;gap:6px;padding:8px 16px"><button class="btn btn-primary btn-sm" onclick="showToast('success','Accepted!','WhatsApp sent to Priya')">Accept</button><button class="btn btn-ghost btn-sm">Decline</button></td></tr>
+                <tr><td>Amit Mehra</td><td>💊 Medicine</td><td>1 box</td><td>Phagwara</td><td><span class="badge badge-teal">Flexible</span></td><td style="display:flex;gap:6px;padding:8px 16px"><button class="btn btn-primary btn-sm" onclick="showToast('success','Accepted!')">Accept</button><button class="btn btn-ghost btn-sm">Decline</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Volunteer Dashboard -->
+    <div id="dash-volunteer" class="tab-content">
+      <div class="dash-layout">
+        <div class="dash-sidebar">
+          <div class="dash-user">
+            <div class="dash-avatar" style="background:linear-gradient(135deg,var(--orange),var(--amber))">AK</div>
+            <div><div class="dash-user-name">Arjun Kumar</div><div class="dash-user-role">Volunteer · Jalandhar</div></div>
+          </div>
+          <div class="dash-nav">
+            <button class="dash-nav-item active"><span class="icon">📋</span>My Tasks<div class="dash-badge" style="background:var(--orange)">3</div></button>
+            <button class="dash-nav-item"><span class="icon">🔍</span>Available Tasks</button>
+            <button class="dash-nav-item"><span class="icon">✅</span>Completed</button>
+            <button class="dash-nav-item"><span class="icon">🗺️</span>My Route</button>
+            <button class="dash-nav-item"><span class="icon">🏅</span>Badges & Points</button>
+            <button class="dash-nav-item"><span class="icon">⚙️</span>Settings</button>
+          </div>
+        </div>
+        <div>
+          <div class="kpi-grid">
+            <div class="kpi-card"><div class="kpi-val" style="color:var(--orange)">3</div><div class="kpi-lbl">Active Tasks</div><div class="kpi-change" style="color:var(--amber)">⚡ 1 Urgent</div></div>
+            <div class="kpi-card"><div class="kpi-val highlight">28</div><div class="kpi-lbl">Completed</div><div class="kpi-change kpi-up">↑ Top 10%</div></div>
+            <div class="kpi-card"><div class="kpi-val" style="color:var(--amber)">340</div><div class="kpi-lbl">Points</div><div class="kpi-change" style="color:var(--muted)">🏅 Silver Badge</div></div>
+          </div>
+          <div class="table-wrap">
+            <div class="table-header"><span class="table-title">My Active Tasks</span><button class="btn btn-ghost btn-sm" onclick="showToast('info','Route Planned','3 tasks optimized for shortest route in Jalandhar')">📍 Plan Route</button></div>
+            <table>
+              <thead><tr><th>Task</th><th>From</th><th>Distance</th><th>Deadline</th><th>Status</th><th>Action</th></tr></thead>
+              <tbody>
+                <tr><td>🍱 Food Pickup</td><td>Rahul Singh · S-12</td><td>2.1 km</td><td>1 hr</td><td><span class="badge badge-red">⚡ Urgent</span></td><td><button class="btn btn-primary btn-sm" onclick="showToast('success','Task Started!','Navigation opened. Donor notified on WhatsApp')">Start →</button></td></tr>
+                <tr><td>👗 Clothes Delivery</td><td>Helping Hands NGO</td><td>1.5 km</td><td>Today</td><td><span class="badge badge-blue">In Progress</span></td><td><button class="btn btn-primary btn-sm" onclick="showToast('success','Completed!','Delivery marked done. +15 points earned!')">Complete ✓</button></td></tr>
+                <tr><td>💊 Med Pickup</td><td>Priya K · ModelTown</td><td>3.0 km</td><td>Tomorrow</td><td><span class="badge badge-amber">Assigned</span></td><td><button class="btn btn-ghost btn-sm" onclick="showToast('info','Task Details','1 box of vitamins from Priya — Phagwara Civil Hospital')">Details</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="dash-admin" class="tab-content">
+      <div class="dash-layout">
+        <div class="dash-sidebar">
+          <div class="dash-user">
+            <div class="dash-avatar" style="background:linear-gradient(135deg,#374151,#6b7280)">AD</div>
+            <div><div class="dash-user-name">Admin Panel</div><div class="dash-user-role">System Administrator</div></div>
+          </div>
+          <div class="dash-nav">
+            <button class="dash-nav-item active"><span class="icon">📊</span>Analytics</button>
+            <button class="dash-nav-item"><span class="icon">👥</span>All Users</button>
+            <button class="dash-nav-item"><span class="icon">🏢</span>NGO Verify<div class="dash-badge">4</div></button>
+            <button class="dash-nav-item"><span class="icon">🎁</span>All Donations</button>
+            <button class="dash-nav-item"><span class="icon">📱</span>WA Logs</button>
+            <button class="dash-nav-item"><span class="icon">⚙️</span>Settings</button>
+          </div>
+        </div>
+        <div>
+          <div class="kpi-grid">
+            <div class="kpi-card"><div class="kpi-val highlight">12,450</div><div class="kpi-lbl">Total Donations</div><div class="kpi-change kpi-up">↑ +23% this month</div></div>
+            <div class="kpi-card"><div class="kpi-val" style="color:#60a5fa">340</div><div class="kpi-lbl">Active NGOs</div><div class="kpi-change kpi-up">↑ +12 new</div></div>
+            <div class="kpi-card"><div class="kpi-val" style="color:var(--amber)">5,200</div><div class="kpi-lbl">Volunteers</div><div class="kpi-change kpi-up">↑ +340</div></div>
+          </div>
+          <div class="table-wrap">
+            <div class="table-header"><span class="table-title">Recent Platform Activity</span><button class="btn btn-ghost btn-sm" onclick="showToast('info','Export','Platform report exported to admin@zerohunger.in')">Export Report</button></div>
+            <table>
+              <thead><tr><th>Time</th><th>Event</th><th>User</th><th>Type</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td style="color:var(--muted)">2 min ago</td><td>New Donation</td><td>Rahul Singh</td><td>🍱 Food</td><td><span class="badge badge-amber">Pending</span></td></tr>
+                <tr><td style="color:var(--muted)">5 min ago</td><td>NGO Accepted</td><td>Helping Hands</td><td>👗 Clothes</td><td><span class="badge badge-green">Active</span></td></tr>
+                <tr><td style="color:var(--muted)">12 min ago</td><td>WA Alert Sent</td><td>System</td><td>📱 Alert</td><td><span class="badge badge-blue">Delivered</span></td></tr>
+                <tr><td style="color:var(--muted)">30 min ago</td><td>New NGO Reg.</td><td>CareShare</td><td>🏢 NGO</td><td><span class="badge badge-amber">Pending</span></td></tr>
+                <tr><td style="color:var(--muted)">1 hr ago</td><td>Delivery Done</td><td>Arjun Kumar</td><td>💊 Med</td><td><span class="badge badge-green">Complete</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ TESTIMONIALS ═══════════════ -->
+<section class="section">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="tag">Community Voices</div>
+      <h2 class="h2 heading">What People Say</h2>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card reveal stagger-1">
+        <div class="stars">★★★★★</div>
+        <div class="quote-mark">"</div>
+        <div class="testimonial-text">ZeroHunger made donating so easy. I submitted my leftover food after a wedding — within 20 minutes an NGO confirmed pickup. 80 people ate that night. I cried happy tears.</div>
+        <div class="testimonial-author">
+          <div class="author-avatar" style="background:linear-gradient(135deg,var(--green-700),var(--green-500))">RS</div>
+          <div><div class="author-name">Rahul Sharma</div><div class="author-role">Donor · Jalandhar</div></div>
+        </div>
+      </div>
+      <div class="testimonial-card reveal stagger-2">
+        <div class="stars">★★★★★</div>
+        <div class="quote-mark">"</div>
+        <div class="testimonial-text">As an NGO admin, tracking donations used to be chaos. Now the WhatsApp alerts and dashboard handle everything. Our response time dropped from 4 hours to 28 minutes.</div>
+        <div class="testimonial-author">
+          <div class="author-avatar" style="background:linear-gradient(135deg,var(--blue),#60a5fa)">PK</div>
+          <div><div class="author-name">Priya Kaur</div><div class="author-role">NGO Director · Helping Hands</div></div>
+        </div>
+      </div>
+      <div class="testimonial-card reveal stagger-3">
+        <div class="stars">★★★★★</div>
+        <div class="quote-mark">"</div>
+        <div class="testimonial-text">Volunteering on weekends used to mean calling multiple NGOs. Now I open the app, see tasks near me, accept on WhatsApp, and go. The gamification keeps me motivated too!</div>
+        <div class="testimonial-author">
+          <div class="author-avatar" style="background:linear-gradient(135deg,var(--orange),var(--amber))">AK</div>
+          <div><div class="author-name">Arjun Kumar</div><div class="author-role">Volunteer · 28 Tasks Completed</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ FAQ ═══════════════ -->
+<section class="section" style="background:rgba(255,255,255,0.01)">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="tag">Got Questions?</div>
+      <h2 class="h2 heading">Frequently Asked</h2>
+    </div>
+    <div class="faq-list" id="faq-list"></div>
+  </div>
+</section>
+
+<!-- ═══════════════ CTA SECTION ═══════════════ -->
+<section class="section">
+  <div class="container">
+    <div style="background:linear-gradient(135deg,rgba(27,107,47,0.4),rgba(13,148,136,0.2));border:1px solid rgba(76,175,104,0.2);border-radius:var(--r-lg);padding:72px 48px;text-align:center;position:relative;overflow:hidden" class="reveal">
+      <div style="position:absolute;top:-60px;right:-60px;width:240px;height:240px;border-radius:50%;background:rgba(43,163,74,0.08);filter:blur(40px)"></div>
+      <div style="position:absolute;bottom:-60px;left:-60px;width:200px;height:200px;border-radius:50%;background:rgba(13,148,136,0.06);filter:blur(40px)"></div>
+      <div class="tag" style="margin-bottom:20px">Join Today — It's Free</div>
+      <h2 class="h2 heading" style="margin-bottom:16px">Ready to Make a Difference?</h2>
+      <p class="subtext" style="max-width:480px;margin:0 auto 32px">Over 5,200 volunteers, 340 NGOs, and thousands of donors are already making Punjab hunger-free. Your turn.</p>
+      <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
+        <button class="btn btn-primary btn-lg" onclick="openModal('register')">🌱 Start Donating</button>
+        <button class="btn btn-outline btn-lg" onclick="openModal('ngo')">🏢 Register as NGO</button>
+        <button class="btn btn-ghost btn-lg" onclick="openModal('volunteer')">🤝 Volunteer</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="nav-logo" style="margin-bottom:12px">
+          <div class="nav-logo-mark">🌱</div>
+          <span class="nav-logo-text">Zero<span>Hunger</span></span>
+        </div>
+        <p class="footer-brand-desc">A community-driven platform connecting donors, NGOs, and volunteers to eliminate hunger and resource waste. Supporting UN SDG Goal 2.</p>
+        <div class="footer-social">
+          <div class="social-btn" title="Twitter/X" onclick="showToast('info','Social','Follow us @ZeroHungerIN')">𝕏</div>
+          <div class="social-btn" title="LinkedIn" onclick="showToast('info','LinkedIn','ZeroHunger Platform on LinkedIn')">in</div>
+          <div class="social-btn" title="WhatsApp" onclick="showToast('info','WhatsApp','Join our community: wa.me/zerohunger')">💬</div>
+          <div class="social-btn" title="GitHub" onclick="showToast('info','GitHub','Open source at github.com/zerohunger')">⌥</div>
+        </div>
+      </div>
+      <div>
+        <div class="footer-heading">Platform</div>
+        <div class="footer-links">
+          <span class="footer-link" onclick="openModal('donate')">Donate</span>
+          <span class="footer-link" onclick="openModal('ngo')">Register NGO</span>
+          <span class="footer-link" onclick="openModal('volunteer')">Volunteer</span>
+          <span class="footer-link">Track Donation</span>
+          <span class="footer-link">Impact Report</span>
+        </div>
+      </div>
+      <div>
+        <div class="footer-heading">Resources</div>
+        <div class="footer-links">
+          <span class="footer-link">API Docs</span>
+          <span class="footer-link">WhatsApp Setup</span>
+          <span class="footer-link">Blog</span>
+          <span class="footer-link">Press Kit</span>
+          <span class="footer-link">Careers</span>
+        </div>
+      </div>
+      <div>
+        <div class="footer-heading">Legal</div>
+        <div class="footer-links">
+          <span class="footer-link">Privacy Policy</span>
+          <span class="footer-link">Terms of Service</span>
+          <span class="footer-link">Cookie Policy</span>
+          <span class="footer-link">Contact Us</span>
+        </div>
+        <div style="margin-top:20px;background:var(--green-100);background:rgba(43,163,74,0.08);border-radius:10px;padding:12px">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:6px">TRAINING AT</div>
+          <div style="font-size:13px;font-weight:600;color:var(--text)">O7Services, Jalandhar</div>
+          <div style="font-size:11px;color:var(--muted)">ISO 9001:2015 Certified</div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2025 ZeroHunger. Built by Satyam Saroj · Roll: 17032249048 · GNDU Jalandhar</div>
+      <div class="sdg-badge">🌍 Supporting UN SDG Goal 2 — Zero Hunger</div>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══════════════ MODALS ═══════════════ -->
+
+<!-- Login Modal -->
+<div class="overlay" id="modal-login" onclick="closeModalOnBg(event,'login')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Welcome Back</div>
+      <div class="modal-close" onclick="closeModal('login')">✕</div>
+    </div>
+    <div class="modal-body">
+      <div style="text-align:center;margin-bottom:24px">
+        <div style="font-size:40px;margin-bottom:8px">🌱</div>
+        <p class="subtext">Sign in to your ZeroHunger account</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="form-group"><label class="label">Email Address</label><input class="input" type="email" placeholder="you@example.com"/></div>
+        <div class="form-group"><label class="label">Password</label><input class="input" type="password" placeholder="••••••••"/></div>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <label class="checkbox-wrap"><input type="checkbox"/><span>Remember me</span></label>
+          <a style="font-size:13px;color:var(--green-400);cursor:pointer">Forgot password?</a>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('login')">Cancel</button>
+      <button class="btn btn-primary" onclick="closeModal('login');showToast('success','Welcome back!','Logged in successfully. Redirecting to dashboard…')">Sign In →</button>
+    </div>
+  </div>
+</div>
+
+<!-- Register Modal -->
+<div class="overlay" id="modal-register" onclick="closeModalOnBg(event,'register')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Create Account</div>
+      <div class="modal-close" onclick="closeModal('register')">✕</div>
+    </div>
+    <div class="modal-body">
+      <div style="margin-bottom:20px">
+        <div class="label" style="margin-bottom:8px">I want to register as:</div>
+        <div class="radio-group" id="reg-role-group">
+          <div class="radio-chip active" onclick="selectRole(this,'Donor')">🎁 Donor</div>
+          <div class="radio-chip" onclick="selectRole(this,'NGO')">🏢 NGO</div>
+          <div class="radio-chip" onclick="selectRole(this,'Volunteer')">🤝 Volunteer</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="form-group"><label class="label">First Name</label><input class="input" placeholder="Satyam"/></div>
+        <div class="form-group"><label class="label">Last Name</label><input class="input" placeholder="Saroj"/></div>
+        <div class="form-group" style="grid-column:1/-1"><label class="label">Email</label><input class="input" type="email" placeholder="satyam@example.com"/></div>
+        <div class="form-group" style="grid-column:1/-1"><label class="label">WhatsApp Number</label><input class="input" type="tel" placeholder="+91 98765 43210"/></div>
+        <div class="form-group"><label class="label">City</label><input class="input" placeholder="Jalandhar"/></div>
+        <div class="form-group"><label class="label">Pincode</label><input class="input" placeholder="144001"/></div>
+        <div class="form-group"><label class="label">Password</label><input class="input" type="password" placeholder="••••••••"/></div>
+        <div class="form-group"><label class="label">Confirm Password</label><input class="input" type="password" placeholder="••••••••"/></div>
+      </div>
+      <div style="margin-top:16px">
+        <div class="label" style="margin-bottom:8px">Donation Preferences:</div>
+        <div class="radio-group">
+          <div class="radio-chip active" onclick="this.classList.toggle('active')">🍱 Food</div>
+          <div class="radio-chip" onclick="this.classList.toggle('active')">👗 Clothes</div>
+          <div class="radio-chip" onclick="this.classList.toggle('active')">💊 Medicines</div>
+          <div class="radio-chip" onclick="this.classList.toggle('active')">🧴 Sanitary</div>
+          <div class="radio-chip" onclick="this.classList.toggle('active')">📦 Essentials</div>
+          <div class="radio-chip" onclick="this.classList.toggle('active')">💰 Money</div>
+        </div>
+      </div>
+      <label class="checkbox-wrap" style="margin-top:16px"><input type="checkbox"/><span>I agree to the <a style="color:var(--green-400)">Terms of Service</a> and <a style="color:var(--green-400)">Privacy Policy</a></span></label>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('register')">Cancel</button>
+      <button class="btn btn-primary" onclick="closeModal('register');showToast('success','Account Created! 🎉','Welcome to ZeroHunger! Check WhatsApp for verification.')">Create Account →</button>
+    </div>
+  </div>
+</div>
+
+<!-- Donate Modal -->
+<div class="overlay" id="modal-donate" onclick="closeModalOnBg(event,'donate')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">🎁 Submit a Donation</div>
+      <div class="modal-close" onclick="closeModal('donate')">✕</div>
+    </div>
+    <div class="modal-body">
+      <!-- Stepper -->
+      <div style="display:flex;align-items:center;gap:0;margin-bottom:24px" id="donate-stepper">
+        <div class="step-dot active" data-s="1">1</div>
+        <div class="step-line"></div>
+        <div class="step-dot" data-s="2">2</div>
+        <div class="step-line"></div>
+        <div class="step-dot" data-s="3">3</div>
+        <div class="step-line"></div>
+        <div class="step-dot" data-s="4">✓</div>
+      </div>
+      <style>
+        .step-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;background:rgba(255,255,255,0.06);border:2px solid var(--border);color:var(--muted);flex-shrink:0;transition:all 0.3s}
+        .step-dot.active{background:var(--green-600);border-color:var(--green-500);color:#fff}
+        .step-dot.done{background:var(--green-700);border-color:var(--green-600);color:var(--green-300)}
+        .step-line{flex:1;height:2px;background:var(--border);transition:background 0.3s}
+        .step-line.done{background:var(--green-700)}
+      </style>
+
+      <!-- Step 1: Category -->
+      <div id="donate-step-1">
+        <div style="margin-bottom:16px;font-size:15px;font-weight:600;color:var(--muted)">Step 1 — Choose Category</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="radio-chip" style="padding:14px;text-align:center" onclick="selectDoneCat(this,'Food')">🍱<br><strong>Food</strong></div>
+          <div class="radio-chip" style="padding:14px;text-align:center" onclick="selectDoneCat(this,'Clothes')">👗<br><strong>Clothes</strong></div>
+          <div class="radio-chip" style="padding:14px;text-align:center" onclick="selectDoneCat(this,'Medicines')">💊<br><strong>Medicines</strong></div>
+          <div class="radio-chip" style="padding:14px;text-align:center" onclick="selectDoneCat(this,'Sanitary')">🧴<br><strong>Sanitary</strong></div>
+          <div class="radio-chip" style="padding:14px;text-align:center" onclick="selectDoneCat(this,'Essentials')">📦<br><strong>Essentials</strong></div>
+          <div class="radio-chip" style="padding:14px;text-align:center" onclick="selectDoneCat(this,'Money')">💰<br><strong>Money</strong></div>
+        </div>
+      </div>
+
+      <!-- Step 2: Details -->
+      <div id="donate-step-2" style="display:none">
+        <div style="margin-bottom:16px;font-size:15px;font-weight:600;color:var(--muted)">Step 2 — Item Details</div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="form-group"><label class="label">Description</label><textarea class="input" placeholder="Describe the item — type, condition, quantity…" style="min-height:80px"></textarea></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+            <div class="form-group"><label class="label">Quantity</label><input class="input" placeholder="e.g. 5 kg or 20 servings"/></div>
+            <div class="form-group"><label class="label">Condition</label><select class="input"><option>Fresh / New</option><option>Good</option><option>Sealed / Packed</option></select></div>
+          </div>
+          <div class="form-group"><label class="label">Notes for NGO</label><input class="input" placeholder="Handling instructions, allergies, access info…"/></div>
+          <div class="upload-zone" onclick="showToast('info','Upload','Photo upload feature — attach up to 5 images')">
+            <div style="font-size:24px;margin-bottom:8px">📷</div>
+            <div style="font-size:14px;font-weight:500;margin-bottom:4px">Upload Photos (optional)</div>
+            <div style="font-size:12px;color:var(--muted)">Click or drag & drop — max 5 photos, 5 MB each</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3: Location & Timing -->
+      <div id="donate-step-3" style="display:none">
+        <div style="margin-bottom:16px;font-size:15px;font-weight:600;color:var(--muted)">Step 3 — Location & Schedule</div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="form-group"><label class="label">Pickup Address</label><input class="input" placeholder="Full address with landmark"/></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+            <div class="form-group"><label class="label">City</label><input class="input" placeholder="Jalandhar"/></div>
+            <div class="form-group"><label class="label">Pincode</label><input class="input" placeholder="144001"/></div>
+          </div>
+          <div class="form-group"><label class="label">Pickup Urgency</label>
+            <div class="radio-group" style="margin-top:4px">
+              <div class="radio-chip active" onclick="selectRadio(this,'.urg')">⚡ Immediate</div>
+              <div class="radio-chip" onclick="selectRadio(this,'.urg')">☀️ Same Day</div>
+              <div class="radio-chip" onclick="selectRadio(this,'.urg')">📅 Next Day</div>
+              <div class="radio-chip" onclick="selectRadio(this,'.urg')">🗓️ Flexible</div>
+            </div>
+          </div>
+          <div style="background:rgba(43,163,74,0.08);border:1px solid rgba(76,175,104,0.2);border-radius:var(--r);padding:14px">
+            <div style="font-size:13px;font-weight:600;color:var(--green-400);margin-bottom:4px">📱 WhatsApp Alert Preview</div>
+            <div style="font-size:12px;color:var(--muted)">When you submit, nearby NGOs will instantly receive:<br><em>"🔔 New donation in Jalandhar! Food — 5 kg. Reply 1 to Accept, 2 to Decline"</em></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer" id="donate-footer">
+      <button class="btn btn-ghost" id="donate-back" style="display:none" onclick="donateStep(-1)">← Back</button>
+      <button class="btn btn-ghost" onclick="closeModal('donate')">Cancel</button>
+      <button class="btn btn-primary" id="donate-next" onclick="donateStep(1)">Next Step →</button>
+    </div>
+  </div>
+</div>
+
+<!-- Volunteer Modal -->
+<div class="overlay" id="modal-volunteer" onclick="closeModalOnBg(event,'volunteer')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">🤝 Join as Volunteer</div>
+      <div class="modal-close" onclick="closeModal('volunteer')">✕</div>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div class="form-group"><label class="label">Full Name</label><input class="input" placeholder="Arjun Kumar"/></div>
+          <div class="form-group"><label class="label">WhatsApp</label><input class="input" placeholder="+91 98765 43210"/></div>
+        </div>
+        <div class="form-group"><label class="label">Email</label><input class="input" type="email" placeholder="arjun@example.com"/></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div class="form-group"><label class="label">City</label><input class="input" placeholder="Jalandhar"/></div>
+          <div class="form-group"><label class="label">Available Days</label><select class="input"><option>Weekends Only</option><option>Weekdays</option><option>Any Day</option></select></div>
+        </div>
+        <div class="form-group"><label class="label">Transport</label>
+          <div class="radio-group" style="margin-top:4px">
+            <div class="radio-chip active" onclick="selectRadio(this,'.trans')">🚗 Car</div>
+            <div class="radio-chip" onclick="selectRadio(this,'.trans')">🏍️ Bike</div>
+            <div class="radio-chip" onclick="selectRadio(this,'.trans')">🚲 Cycle</div>
+            <div class="radio-chip" onclick="selectRadio(this,'.trans')">🚶 Walk</div>
+          </div>
+        </div>
+        <div class="form-group"><label class="label">Why do you want to volunteer?</label><textarea class="input" placeholder="Tell us briefly about your motivation…" style="min-height:70px"></textarea></div>
+        <label class="checkbox-wrap"><input type="checkbox"/><span>I agree to the volunteer <a style="color:var(--green-400)">Code of Conduct</a></span></label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('volunteer')">Cancel</button>
+      <button class="btn btn-primary" onclick="closeModal('volunteer');showToast('success','Welcome, Volunteer! 🏅','Your application is submitted. WhatsApp verification sent!')">Join Now →</button>
+    </div>
+  </div>
+</div>
+
+<!-- NGO Modal -->
+<div class="overlay" id="modal-ngo" onclick="closeModalOnBg(event,'ngo')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">🏢 Register Your NGO</div>
+      <div class="modal-close" onclick="closeModal('ngo')">✕</div>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="form-group"><label class="label">NGO Name</label><input class="input" placeholder="Helping Hands Foundation"/></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div class="form-group"><label class="label">Registration No.</label><input class="input" placeholder="REG-2024-XXXX"/></div>
+          <div class="form-group"><label class="label">Founded Year</label><input class="input" type="number" placeholder="2010"/></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div class="form-group"><label class="label">City</label><input class="input" placeholder="Jalandhar"/></div>
+          <div class="form-group"><label class="label">WhatsApp (Admin)</label><input class="input" placeholder="+91 98765 43210"/></div>
+        </div>
+        <div class="form-group"><label class="label">Primary Email</label><input class="input" type="email" placeholder="admin@helpinghands.org"/></div>
+        <div class="form-group"><label class="label">Focus Areas</label>
+          <div class="radio-group" style="margin-top:4px">
+            <div class="radio-chip active" onclick="this.classList.toggle('active')">🍱 Food</div>
+            <div class="radio-chip" onclick="this.classList.toggle('active')">💊 Health</div>
+            <div class="radio-chip" onclick="this.classList.toggle('active')">📚 Education</div>
+            <div class="radio-chip" onclick="this.classList.toggle('active')">👗 Clothing</div>
+            <div class="radio-chip" onclick="this.classList.toggle('active')">🏠 Shelter</div>
+          </div>
+        </div>
+        <div class="form-group"><label class="label">Brief Description</label><textarea class="input" placeholder="Describe your NGO's mission and work…" style="min-height:70px"></textarea></div>
+        <label class="checkbox-wrap"><input type="checkbox"/><span>I certify this NGO is legally registered and I have authority to register on this platform</span></label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('ngo')">Cancel</button>
+      <button class="btn btn-primary" onclick="closeModal('ngo');showToast('success','NGO Application Submitted! 🏢','Admin will verify within 24 hours. WhatsApp sent!')">Submit for Verification →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ JAVASCRIPT ═══════════════ -->
+<script>
+// ── Cursor ──────────────────────────────────────────────
+const cursor = document.getElementById('cursor');
+const ring   = document.getElementById('cursor-ring');
+let mx=0, my=0, rx=0, ry=0;
+document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; cursor.style.left=mx+'px'; cursor.style.top=my+'px'; });
+(function animRing(){rx+=(mx-rx)*0.12; ry+=(my-ry)*0.12; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(animRing);})();
+
+// ── Navbar scroll ────────────────────────────────────────
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 20);
+  const links = document.querySelectorAll('.nav-link');
+  const sections = ['hero','categories','ngos','volunteer-section','dashboard','about'];
+  let cur = 'hero';
+  sections.forEach(id => { const el=document.getElementById(id); if(el && window.scrollY >= el.offsetTop-100) cur=id; });
+  links.forEach(l => l.classList.toggle('active', l.getAttribute('href')==='#'+cur));
+});
+
+// ── Mobile nav ────────────────────────────────────────────
+function toggleMobileNav(){
+  const nav = document.getElementById('mobile-nav');
+  nav.classList.toggle('open');
+}
+
+// ── Scroll reveal ─────────────────────────────────────────
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); observer.unobserve(e.target); }});
+}, {threshold:0.1});
+document.querySelectorAll('.reveal,.reveal-left,.reveal-right').forEach(el=>observer.observe(el));
+
+// ── Count-up animation ────────────────────────────────────
+function countUp(el, target, suffix=''){
+  let start=0, dur=2000, step=16;
+  const inc = target/(dur/step);
+  const timer = setInterval(()=>{
+    start = Math.min(start+inc, target);
+    el.textContent = Math.round(start).toLocaleString('en-IN') + suffix;
+    if(start>=target){ el.textContent=(target>=1000?target.toLocaleString('en-IN'):target)+suffix; clearInterval(timer); }
+  }, step);
+}
+const countObserver = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const el=e.target, target=+el.dataset.target;
+      countUp(el, target, target>=1000?'+':'');
+      countObserver.unobserve(el);
+    }
+  });
+},{threshold:0.5});
+document.querySelectorAll('[data-target]').forEach(el=>countObserver.observe(el));
+
+// Hero counter
+setTimeout(()=>{
+  countUp(document.getElementById('count-donations'),12450,'+');
+  countUp(document.getElementById('count-ngos'),340,'+');
+  countUp(document.getElementById('count-cities'),18,'');
+},400);
+
+// ── Progress rings ────────────────────────────────────────
+const ringObserver = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const ring=e.target.querySelector('.ring-fill');
+      if(ring){const pct=+ring.dataset.pct/100; ring.style.strokeDashoffset=339*(1-pct);}
+      ringObserver.unobserve(e.target);
+    }
+  });
+},{threshold:0.5});
+document.querySelectorAll('.impact-ring').forEach(el=>ringObserver.observe(el));
+
+// ── Cat bar animation ─────────────────────────────────────
+const barObserver = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.querySelectorAll('.cat-bar-fill').forEach(b=>{ setTimeout(()=>{b.style.width=b.dataset.w},200); });
+      barObserver.unobserve(e.target);
+    }
+  });
+},{threshold:0.3});
+document.querySelectorAll('.categories-grid').forEach(el=>barObserver.observe(el));
+
+// ── Toast system ──────────────────────────────────────────
+function showToast(type, title, msg=''){
+  const icons={success:'✅',error:'❌',info:'ℹ️',warn:'⚠️'};
+  const container=document.getElementById('toast-container');
+  const toast=document.createElement('div');
+  toast.className=`toast toast-${type}`;
+  toast.innerHTML=`<div class="toast-icon">${icons[type]}</div><div><div class="toast-title">${title}</div>${msg?`<div class="toast-msg">${msg}</div>`:''}</div><div class="toast-close" onclick="dismissToast(this)">✕</div>`;
+  container.appendChild(toast);
+  setTimeout(()=>{ toast.classList.add('exit'); setTimeout(()=>toast.remove(),300); }, 4000);
+}
+function dismissToast(btn){ const t=btn.closest('.toast'); t.classList.add('exit'); setTimeout(()=>t.remove(),300); }
+
+// ── Modal system ──────────────────────────────────────────
+function openModal(id){
+  document.getElementById('modal-'+id).classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeModal(id){
+  document.getElementById('modal-'+id).classList.remove('open');
+  document.body.style.overflow='';
+}
+function closeModalOnBg(e,id){ if(e.target===document.getElementById('modal-'+id)) closeModal(id); }
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') document.querySelectorAll('.overlay.open').forEach(o=>o.classList.remove('open')); document.body.style.overflow=''; });
+
+// ── Role selector ─────────────────────────────────────────
+function selectRole(el, role){
+  el.closest('.radio-group').querySelectorAll('.radio-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  showToast('info',`Role: ${role}`,`You're registering as a ${role}. Form will adapt.`);
+}
+function selectRadio(el, cls){
+  el.closest('.radio-group').querySelectorAll('.radio-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+}
+function selectDoneCat(el, cat){
+  document.querySelectorAll('#donate-step-1 .radio-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  showToast('info','Category Selected',`You chose: ${cat}`);
+}
+
+// ── Donate stepper ────────────────────────────────────────
+let donateStepNum=1;
+function donateStep(dir){
+  const next = donateStepNum + dir;
+  if(next<1||next>3) return;
+  if(next>3){
+    closeModal('donate');
+    showToast('success','Donation Submitted! 🎉','NGOs near you have been notified on WhatsApp. You\'ll get confirmation soon!');
+    donateStepNum=1; resetDonate(); return;
+  }
+  donateStepNum=next;
+  updateDonate();
+}
+function updateDonate(){
+  [1,2,3].forEach(i=>{
+    const s=document.getElementById(`donate-step-${i}`);
+    if(s) s.style.display = i===donateStepNum?'block':'none';
+  });
+  document.querySelectorAll('#donate-stepper .step-dot').forEach((d,i)=>{
+    d.classList.toggle('active',i+1===donateStepNum);
+    d.classList.toggle('done',i+1<donateStepNum);
+  });
+  document.querySelectorAll('#donate-stepper .step-line').forEach((l,i)=>l.classList.toggle('done',i+1<donateStepNum));
+  const back=document.getElementById('donate-back'), next=document.getElementById('donate-next');
+  back.style.display=donateStepNum>1?'':'none';
+  next.textContent=donateStepNum===3?'Submit Donation 🎁':'Next Step →';
+  if(donateStepNum===3){
+    next.onclick=()=>{
+      closeModal('donate');
+      showToast('success','Donation Submitted! 🎉','NGOs near you notified on WhatsApp! Avg response: 28 minutes.');
+      donateStepNum=1; updateDonate(); next.onclick=()=>donateStep(1);
+    };
+  } else { next.onclick=()=>donateStep(1); }
+}
+function resetDonate(){ donateStepNum=1; updateDonate(); }
+
+// ── NGO Directory ─────────────────────────────────────────
+const ngos=[
+  {name:'Helping Hands Foundation',city:'Jalandhar',icon:'🤝',served:'2,340',members:'48',tags:['Food','Clothes','Medicine'],type:['food','clothing','health'],rating:'4.9'},
+  {name:'CareShare NGO',city:'Ludhiana',icon:'❤️',served:'1,820',members:'32',tags:['Food','Sanitary'],type:['food'],rating:'4.7'},
+  {name:'MedAid India',city:'Phagwara',icon:'💊',served:'940',members:'21',tags:['Medicines','Health'],type:['health'],rating:'4.8'},
+  {name:'Green Earth Welfare',city:'Amritsar',icon:'🌿',served:'3,100',members:'67',tags:['Food','Essentials'],type:['food'],rating:'4.6'},
+  {name:'Hope Foundation',city:'Jalandhar',icon:'🌟',served:'1,450',members:'29',tags:['Education','Food'],type:['food','education'],rating:'4.9'},
+  {name:'ClotheCare Punjab',city:'Patiala',icon:'👗',served:'780',members:'15',tags:['Clothes','Blankets'],type:['clothing'],rating:'4.5'},
+];
+let ngoFilter='all';
+function renderNGOs(list){
+  const grid=document.getElementById('ngo-grid');
+  grid.innerHTML=list.map(n=>`
+    <div class="ngo-card" onclick="showToast('info','${n.name}','Viewing profile & donation options for ${n.name}, ${n.city}')">
+      <div class="ngo-logo">${n.icon}</div>
+      <div class="ngo-name">${n.name}</div>
+      <div class="ngo-location">📍 ${n.city} · ⭐ ${n.rating}</div>
+      <div class="ngo-stats">
+        <div class="ngo-stat"><div class="ngo-stat-val">${n.served}</div><div class="ngo-stat-lbl">People Served</div></div>
+        <div class="ngo-stat"><div class="ngo-stat-val">${n.members}</div><div class="ngo-stat-lbl">Members</div></div>
+      </div>
+      <div class="ngo-tags">${n.tags.map(t=>`<span class="badge badge-green">${t}</span>`).join('')}</div>
+      <button class="btn btn-outline btn-sm" style="margin-top:12px;width:100%" onclick="event.stopPropagation();openModal('donate')">Donate to this NGO</button>
+    </div>
+  `).join('');
+}
+function filterNGOs(){
+  const q=document.getElementById('ngo-search').value.toLowerCase();
+  renderNGOs(ngos.filter(n=>n.name.toLowerCase().includes(q)||n.city.toLowerCase().includes(q)||n.tags.some(t=>t.toLowerCase().includes(q))));
+}
+function filterNGOsByType(el, type){
+  document.querySelectorAll('.radio-chip').forEach(c=>{ if(['All','🍱 Food','💊 Health','📚 Education','👗 Clothing'].some(l=>c.textContent.trim()===l)) c.classList.remove('active'); });
+  el.classList.add('active'); ngoFilter=type;
+  renderNGOs(type==='all'?ngos:ngos.filter(n=>n.type.includes(type)));
+}
+renderNGOs(ngos);
+
+// ── Map dots ──────────────────────────────────────────────
+const mapData=[
+  {x:28,y:35,city:'Jalandhar',active:12,col:'var(--green-400)'},
+  {x:18,y:55,city:'Ludhiana',active:8,col:'var(--green-400)'},
+  {x:8,y:25,city:'Amritsar',active:6,col:'var(--amber)'},
+  {x:45,y:60,city:'Phagwara',active:4,col:'var(--amber)'},
+  {x:52,y:42,city:'Hoshiarpur',active:3,col:'var(--muted)'},
+  {x:30,y:70,city:'Patiala',active:5,col:'var(--amber)'},
+  {x:65,y:30,city:'Pathankot',active:2,col:'var(--muted)'},
+  {x:70,y:55,city:'Gurdaspur',active:1,col:'var(--muted)'},
+];
+const mp=document.getElementById('map-placeholder');
+mapData.forEach(d=>{
+  const dot=document.createElement('div');
+  dot.className='map-dot';
+  dot.style.cssText=`left:${d.x}%;top:${d.y}%;background:${d.col}`;
+  dot.title=d.city;
+  dot.addEventListener('click',()=>showToast('info',`📍 ${d.city}`,`${d.active} active donations right now`));
+  mp.appendChild(dot);
+});
+
+// ── WhatsApp Demo ─────────────────────────────────────────
+const waMsgs=[
+  {text:'🔔 NEW DONATION ALERT!\n\nDonor: Rahul Singh\nItem: 5kg Cooked Rice\nLocation: Sector 12, Jalandhar\nUrgency: URGENT ⚡\n\nReply:\n1️⃣ Accept\n2️⃣ Decline',out:false,time:'09:31'},
+  {text:'1',out:true,time:'09:32'},
+  {text:'✅ Accepted! Volunteer Arjun Kumar has been notified. ETA 30 min.',out:false,time:'09:32'},
+  {text:'Thank you! We will feed 40 people tonight. 🙏',out:true,time:'09:35'},
+];
+function renderWADemo(){
+  const body=document.getElementById('wa-demo');
+  body.innerHTML=waMsgs.map(m=>`
+    <div class="wa-msg ${m.out?'wa-msg-out':'wa-msg-in'}">
+      ${m.text.replace(/\n/g,'<br>')}
+      <span class="wa-msg-time">${m.time} ${m.out?'✓✓':''}</span>
+    </div>
+  `).join('');
+  body.scrollTop=body.scrollHeight;
+}
+function simulateWA(){
+  document.getElementById('wa-demo').innerHTML='';
+  let i=0;
+  const timer=setInterval(()=>{
+    if(i>=waMsgs.length){clearInterval(timer);showToast('success','WA Demo Complete','This is how real-time alerts work on ZeroHunger!');return;}
+    const body=document.getElementById('wa-demo');
+    const m=waMsgs[i];
+    const div=document.createElement('div');
+    div.className=`wa-msg ${m.out?'wa-msg-out':'wa-msg-in'}`;
+    div.style.animation='slideIn 0.4s ease both';
+    div.innerHTML=m.text.replace(/\n/g,'<br>')+`<span class="wa-msg-time">${m.time} ${m.out?'✓✓':''}</span>`;
+    body.appendChild(div);
+    body.scrollTop=body.scrollHeight;
+    i++;
+  },1000);
+}
+function sendWaMessage(){
+  const inp=document.getElementById('wa-input');
+  if(!inp.value.trim()) return;
+  const body=document.getElementById('wa-demo');
+  const div=document.createElement('div');
+  div.className='wa-msg wa-msg-out';
+  div.style.animation='slideIn 0.4s ease both';
+  div.innerHTML=inp.value+`<span class="wa-msg-time">Now ✓</span>`;
+  body.appendChild(div);
+  body.scrollTop=body.scrollHeight;
+  const val=inp.value; inp.value='';
+  setTimeout(()=>{
+    const r=document.createElement('div');
+    r.className='wa-msg wa-msg-in';
+    r.style.animation='slideIn 0.4s ease both';
+    r.innerHTML='Thanks for your message! A ZeroHunger admin will respond shortly. To donate, visit zerohunger.in 🌱'+`<span class="wa-msg-time">Now</span>`;
+    body.appendChild(r); body.scrollTop=body.scrollHeight;
+  },1000);
+}
+renderWADemo();
+document.getElementById('wa-input').addEventListener('keypress',e=>{ if(e.key==='Enter') sendWaMessage(); });
+
+// ── Activity Feed ─────────────────────────────────────────
+const activities=[
+  {icon:'🍱',bg:'rgba(43,163,74,0.15)',text:'<strong>Rahul Singh</strong> donated food for 20 people',meta:'Sector 12, Jalandhar',time:'2 min ago'},
+  {icon:'✅',bg:'rgba(29,78,216,0.15)',text:'<strong>Helping Hands NGO</strong> accepted a clothes donation',meta:'Ludhiana branch',time:'5 min ago'},
+  {icon:'📱',bg:'rgba(0,92,75,0.2)',text:'WhatsApp alert sent to 8 NGOs in Phagwara',meta:'System notification',time:'8 min ago'},
+  {icon:'🚚',bg:'rgba(234,88,12,0.15)',text:'<strong>Arjun Kumar</strong> completed pickup task #041',meta:'CareShare, Jalandhar',time:'12 min ago'},
+  {icon:'🏢',bg:'rgba(124,58,237,0.15)',text:'New NGO <strong>ClotheCare Punjab</strong> registered',meta:'Patiala — pending verification',time:'20 min ago'},
+  {icon:'💰',bg:'rgba(245,158,11,0.15)',text:'<strong>₹15,000</strong> monetary donation received',meta:'Hope Foundation, Jalandhar',time:'25 min ago'},
+];
+function renderFeed(){
+  const feed=document.getElementById('activity-feed');
+  feed.innerHTML=activities.map((a,i)=>`
+    <div class="activity-item" style="animation-delay:${i*0.1}s">
+      <div class="activity-icon" style="background:${a.bg}">${a.icon}</div>
+      <div>
+        <div class="activity-text">${a.text}</div>
+        <div class="activity-meta">${a.meta}</div>
+      </div>
+      <div class="activity-time">${a.time}</div>
+    </div>
+  `).join('');
+}
+renderFeed();
+// Auto-rotate feed
+setInterval(()=>{
+  activities.unshift(activities.pop());
+  const items=document.querySelectorAll('.activity-item');
+  items.forEach(it=>{ it.style.animation='none'; it.offsetHeight; it.style.animation='slideIn 0.5s ease both'; });
+  renderFeed();
+},4000);
+
+// ── Volunteer Grid ────────────────────────────────────────
+const volunteers=[
+  {init:'AK',name:'Arjun Kumar',tasks:28,rating:'4.8'},
+  {init:'PR',name:'Priya Rani',tasks:24,rating:'4.9'},
+  {init:'VM',name:'Vikash M.',tasks:19,rating:'4.7'},
+  {init:'SB',name:'Sneha B.',tasks:17,rating:'4.8'},
+];
+document.getElementById('volunteer-grid').innerHTML=volunteers.map((v,i)=>`
+  <div class="volunteer-card" onclick="showToast('info','${v.name}','${v.tasks} tasks completed · Rating: ${v.rating}⭐')">
+    <div class="vol-avatar">${v.init}</div>
+    <div class="vol-name">${v.name}</div>
+    <div class="vol-tasks">${v.tasks} tasks</div>
+    <div class="vol-stars">${'★'.repeat(Math.floor(v.rating))}☆ ${v.rating}</div>
+    <div class="badge badge-green" style="margin-top:8px">🥇 Top Volunteer</div>
+  </div>
+`).join('');
+
+// ── FAQ ───────────────────────────────────────────────────
+const faqs=[
+  {q:'Is ZeroHunger free to use?',a:'Yes, 100% free for donors, NGOs, and volunteers. The platform is community-driven with support from partner organizations.'},
+  {q:'How quickly will my donation be picked up?',a:'Most donations are picked up within 2–4 hours. Urgent donations (perishable food) are prioritized with instant WhatsApp alerts.'},
+  {q:'How do WhatsApp notifications work?',a:'When you submit a donation, our backend sends an instant WhatsApp message to all verified NGOs and volunteers in your area. They simply reply "1" to accept.'},
+  {q:'Can I track my donation in real-time?',a:'Yes! Once an NGO accepts, you can track the volunteer\'s progress through your dashboard. You\'ll also receive WhatsApp updates at each step.'},
+  {q:'How are NGOs verified?',a:'All NGOs undergo a verification process: registration number check, document review, and admin approval. Only verified NGOs appear on the platform.'},
+  {q:'What happens if no NGO accepts my donation?',a:'If no NGO responds within 2 hours, our system automatically expands the search radius and alerts more NGOs. You\'ll be notified on WhatsApp throughout.'},
+];
+document.getElementById('faq-list').innerHTML=faqs.map((f,i)=>`
+  <div class="faq-item" id="faq-${i}">
+    <div class="faq-q" onclick="toggleFAQ(${i})">
+      <span>${f.q}</span>
+      <span class="faq-chevron">⌄</span>
+    </div>
+    <div class="faq-a"><div class="faq-a-inner">${f.a}</div></div>
+  </div>
+`).join('');
+function toggleFAQ(i){
+  const item=document.getElementById('faq-'+i);
+  const wasOpen=item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(f=>f.classList.remove('open'));
+  if(!wasOpen) item.classList.add('open');
+}
+
+// ── Dashboard tabs ────────────────────────────────────────
+function switchDash(btn, role){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('dash-'+role).classList.add('active');
+  showToast('info',`${role.charAt(0).toUpperCase()+role.slice(1)} Dashboard`,`Viewing the ${role} interface`);
+}
+
+// ── Live ticker duplicate ─────────────────────────────────
+// Already duplicated in HTML
+
+// ── Welcome toast ─────────────────────────────────────────
+setTimeout(()=>showToast('info','Welcome to ZeroHunger 🌱','Explore the platform — click any button to see features in action!'), 1500);
+setTimeout(()=>showToast('success','Live Platform','12,450+ donations tracked · 340 NGOs active'), 3500);
+</script>
+</body>
+</html>
